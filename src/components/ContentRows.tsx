@@ -233,14 +233,25 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
 
   const pdf = pdfMap[lesson.id] || pdfMap["pdf-1"];
   const pdfUrl = pdf.file;
+  const absolutePdfUrl = `${window.location.origin}${pdfUrl}`;
+  const googleViewerUrl = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(absolutePdfUrl)}`;
 
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = pdfUrl;
-    link.download = pdf.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(pdfUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = pdf.name;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      // Fallback: open in new tab
+      window.open(pdfUrl, '_blank');
+    }
   };
 
   return (
@@ -287,7 +298,7 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
       </div>
       <div className="flex-1 w-full flex flex-col items-center justify-center">
         <iframe
-          src={pdfUrl}
+          src={googleViewerUrl}
           className="w-full h-full border-0"
           title={lesson.title}
           allowFullScreen
@@ -297,7 +308,10 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
           <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
             Ábrelo aquí
           </a>{" "}
-          o descárgalo con el botón de arriba.
+          o{" "}
+          <button onClick={handleDownload} className="text-primary underline">
+            descárgalo
+          </button>
         </p>
       </div>
     </div>
@@ -402,13 +416,21 @@ const FolderView = ({
           <div className="w-full max-w-5xl mx-auto">
             <div className="flex items-center justify-end gap-2 mb-3">
               <button
-                onClick={() => {
-                  const link = document.createElement('a');
-                  link.href = '/PALOMITAS_REDONDITAS.pdf';
-                  link.download = 'PALOMITAS_REDONDITAS.pdf';
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/PALOMITAS_REDONDITAS.pdf');
+                    const blob = await response.blob();
+                    const blobUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = blobUrl;
+                    link.download = 'PALOMITAS_REDONDITAS.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(blobUrl);
+                  } catch {
+                    window.open('/PALOMITAS_REDONDITAS.pdf', '_blank');
+                  }
                 }}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
               >
@@ -426,7 +448,7 @@ const FolderView = ({
               </a>
             </div>
             <iframe
-              src="/PALOMITAS_REDONDITAS.pdf"
+              src={`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(window.location.origin + '/PALOMITAS_REDONDITAS.pdf')}`}
               className="w-full h-[70vh] rounded-lg border border-border"
               title="Recetas en PDF"
               allowFullScreen
