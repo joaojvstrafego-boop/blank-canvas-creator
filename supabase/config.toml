@@ -1,1 +1,7 @@
 project_id = "gzunvwllnrykwaqtiqhj"
+
+[functions.soporte-chat]
+verify_jwt = false
+
+[functions.instagram-generator]
+verify_jwt = false
