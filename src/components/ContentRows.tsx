@@ -94,13 +94,18 @@ const pdfResources: Record<string, { file: string; name: string }> = {
 
 const getPdfResource = (lessonId: string) => pdfResources[lessonId] || pdfResources["pdf-1"];
 
+const getPdfAccessUrl = (pdfPath: string) => {
+  const query = window.location.search;
+  return query ? `${pdfPath}${query}` : pdfPath;
+};
+
 const openPdfInNewTab = (pdfUrl: string) => {
-  window.open(pdfUrl, "_blank", "noopener,noreferrer");
+  window.open(getPdfAccessUrl(pdfUrl), "_blank", "noopener,noreferrer");
 };
 
 const handlePdfDownload = async (pdfUrl: string, fileName: string) => {
   try {
-    const response = await fetch(pdfUrl, { cache: "no-store" });
+    const response = await fetch(getPdfAccessUrl(pdfUrl), { cache: "no-store" });
     if (!response.ok) throw new Error("PDF unavailable");
 
     const blob = await response.blob();
@@ -259,6 +264,7 @@ const AudioPlayer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void 
 const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void }) => {
   const pdf = getPdfResource(lesson.id);
   const pdfUrl = pdf.file;
+  const pdfAccessUrl = getPdfAccessUrl(pdfUrl);
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
@@ -286,7 +292,7 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
             <span className="hidden sm:inline">Descargar</span>
           </button>
           <a
-            href={pdfUrl}
+            href={pdfAccessUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
@@ -304,16 +310,16 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
       </div>
       <div className="flex-1 w-full flex flex-col items-center justify-center">
         <object
-          data={pdfUrl}
+          data={pdfAccessUrl}
           type="application/pdf"
           className="w-full h-full"
           aria-label={lesson.title}
         >
-          <iframe src={pdfUrl} className="w-full h-full border-0" title={lesson.title} allowFullScreen />
+          <iframe src={pdfAccessUrl} className="w-full h-full border-0" title={lesson.title} allowFullScreen />
         </object>
         <p className="text-xs text-muted-foreground py-2">
           ¿No se ve el PDF?{" "}
-          <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+          <a href={pdfAccessUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
             Ábrelo aquí
           </a>{" "}
           o{" "}
@@ -434,7 +440,7 @@ const FolderView = ({
                 <span>Descargar</span>
               </button>
               <a
-                href="/PALOMITAS_REDONDITAS.pdf"
+                href={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
@@ -444,13 +450,13 @@ const FolderView = ({
               </a>
             </div>
             <object
-              data="/PALOMITAS_REDONDITAS.pdf"
+              data={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
               type="application/pdf"
               className="w-full h-[70vh] rounded-lg border border-border"
               aria-label="Recetas en PDF"
             >
               <iframe
-                src="/PALOMITAS_REDONDITAS.pdf"
+                src={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
                 className="w-full h-[70vh] rounded-lg border border-border"
                 title="Recetas en PDF"
                 allowFullScreen
