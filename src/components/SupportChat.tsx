@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const genAI = new GoogleGenerativeAI("AIzaSyCW_hoj2MpYrnyAd4tiniOVTD6QsJObKNA");
+const genAI = new GoogleGenerativeAI("AIzaSyDpOSo4pWJzPBlijwN0kN9Rls5XQkwyBm0");
 
 const SYSTEM_PROMPT = `Eres Carmela IA 🍿, la asistente experta en palomitas gourmet de Carmela Vega.
 Tu especialidad es ayudar con recetas de palomitas, técnicas de caramelización, negocio de palomitas, precios, empaque y todo lo relacionado.
