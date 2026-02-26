@@ -1,9 +1,20 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, Loader2 } from "lucide-react";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/soporte-chat`;
+const genAI = new GoogleGenerativeAI("AIzaSyDpOSo4pWJzPBlijwN0kN9Rls5XQkwyBm0");
+
+const SYSTEM_PROMPT = `Eres "Carmela IA", la asistente virtual experta en palomitas gourmet del curso "Palomitas Redonditas" de Carmela Vega. Respondes SIEMPRE en español latinoamericano neutro. Eres amable, profesional y apasionada por las palomitas.
+
+REGLAS:
+1. Responde SOLO sobre palomitas gourmet, negocio de palomitas, y temas del curso.
+2. Si preguntan algo fuera del tema, redirige amablemente.
+3. Sé práctica y da consejos accionables.
+4. Usa emojis moderadamente (🍿, ✨, 💡, ✅).
+5. Respuestas concisas pero completas.
+6. Cuando menciones ingredientes, incluye nombres alternativos si aplica (ej: maní/cacahuate, fresa/frutilla).`;
 
 const SupportChat = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -20,100 +31,55 @@ const SupportChat = () => {
     if (!text || isLoading) return;
 
     const userMsg: Msg = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMsg]);
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
     setInput("");
     setIsLoading(true);
 
     let assistantSoFar = "";
-
     const upsertAssistant = (chunk: string) => {
       assistantSoFar += chunk;
+      const content = assistantSoFar;
       setMessages((prev) => {
         const last = prev[prev.length - 1];
         if (last?.role === "assistant") {
-          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: assistantSoFar } : m));
+          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content } : m));
         }
-        return [...prev, { role: "assistant", content: assistantSoFar }];
+        return [...prev, { role: "assistant", content }];
       });
     };
 
     try {
-      const resp = await fetch(CHAT_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ messages: [...messages, userMsg] }),
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+      const history = newMessages.map((m) => ({
+        role: m.role === "user" ? ("user" as const) : ("model" as const),
+        parts: [{ text: m.content }],
+      }));
+
+      const chat = model.startChat({
+        history: [
+          { role: "user", parts: [{ text: "Instrucciones del sistema: " + SYSTEM_PROMPT }] },
+          { role: "model", parts: [{ text: "¡Entendido! Soy Carmela IA 🍿, lista para ayudarte con todo sobre palomitas gourmet." }] },
+          ...history.slice(0, -1),
+        ],
       });
 
-      if (!resp.ok || !resp.body) {
-        const err = await resp.json().catch(() => ({ error: "Error de conexión" }));
-        upsertAssistant(err.error || "Lo siento, ocurrió un error. Intenta de nuevo.");
-        setIsLoading(false);
-        return;
-      }
+      const result = await chat.sendMessageStream(text);
 
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let textBuffer = "";
-      let streamDone = false;
-
-      while (!streamDone) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        textBuffer += decoder.decode(value, { stream: true });
-
-        let newlineIndex: number;
-        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
-          let line = textBuffer.slice(0, newlineIndex);
-          textBuffer = textBuffer.slice(newlineIndex + 1);
-
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (line.startsWith(":") || line.trim() === "") continue;
-          if (!line.startsWith("data: ")) continue;
-
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") {
-            streamDone = true;
-            break;
-          }
-
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (content) upsertAssistant(content);
-          } catch {
-            textBuffer = line + "\n" + textBuffer;
-            break;
-          }
-        }
-      }
-
-      if (textBuffer.trim()) {
-        for (let raw of textBuffer.split("\n")) {
-          if (!raw) continue;
-          if (raw.endsWith("\r")) raw = raw.slice(0, -1);
-          if (raw.startsWith(":") || raw.trim() === "") continue;
-          if (!raw.startsWith("data: ")) continue;
-          const jsonStr = raw.slice(6).trim();
-          if (jsonStr === "[DONE]") continue;
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (content) upsertAssistant(content);
-          } catch {
-            /* ignore */
-          }
-        }
+      for await (const chunk of result.stream) {
+        const chunkText = chunk.text();
+        if (chunkText) upsertAssistant(chunkText);
       }
     } catch (e: any) {
       console.error(e);
       let errorContent = "Lo siento, hubo un problema de conexión. Intenta de nuevo. 🍿";
       if (e?.status === 429 || e?.message?.includes("429")) {
-        errorContent = "⚠️ Muchas solicitudes ahora mismo. Espera unos segundos e intenta de nuevo.";
+        errorContent = "⚠️ Se agotó la cuota de la API. Espera un momento e intenta de nuevo.";
       }
-      upsertAssistant(errorContent);
+      if (assistantSoFar === "") {
+        setMessages((prev) => [...prev, { role: "assistant", content: errorContent }]);
+      }
     }
 
     setIsLoading(false);
@@ -121,7 +87,6 @@ const SupportChat = () => {
 
   return (
     <div className="max-w-3xl mx-auto flex flex-col h-[60vh] bg-card border border-border rounded-xl overflow-hidden">
-      {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center gap-4 py-8">
@@ -143,9 +108,7 @@ const SupportChat = () => {
               ].map((q) => (
                 <button
                   key={q}
-                  onClick={() => {
-                    setInput(q);
-                  }}
+                  onClick={() => setInput(q)}
                   className="text-xs bg-muted hover:bg-muted/80 text-foreground px-3 py-2 rounded-full transition-colors"
                 >
                   {q}
@@ -191,7 +154,6 @@ const SupportChat = () => {
         )}
       </div>
 
-      {/* Input */}
       <div className="border-t border-border p-3">
         <form
           onSubmit={(e) => {
