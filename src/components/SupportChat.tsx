@@ -50,7 +50,7 @@ const SupportChat = () => {
     };
 
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
       const history = newMessages.map((m) => ({
         role: m.role === "user" ? ("user" as const) : ("model" as const),
@@ -74,7 +74,9 @@ const SupportChat = () => {
     } catch (e: any) {
       console.error(e);
       let errorContent = "Lo siento, hubo un problema de conexión. Intenta de nuevo. 🍿";
-      if (e?.status === 429 || e?.message?.includes("429")) {
+      if (e?.status === 404 || e?.message?.includes("no longer available")) {
+        errorContent = "⚠️ Esse modelo do Google foi descontinuado. Já atualizei para um modelo novo; recarregue a página e tente novamente.";
+      } else if (e?.status === 429 || e?.message?.includes("429")) {
         errorContent = "⚠️ Se agotó la cuota de la API. Espera un momento e intenta de nuevo.";
       }
       if (assistantSoFar === "") {
