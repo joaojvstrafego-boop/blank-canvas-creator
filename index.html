@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- TODO: Set the document title to the name of your application -->
+    <title>Palomitas Redonditas</title>
+    <meta name="description" content="Curso de palomitas gourmet con Carmela Vega">
+    <meta name="author" content="Carmela Vega" />
+    <link rel="icon" href="/icon-192.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/icon-512.png" />
+
+    <!-- TODO: Update og:title to match your application name -->
+    
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a1bac6e0-e5b6-4638-ab79-22a04c6f7566/id-preview-4b03532c--7b7ce59c-7025-4c51-b940-a181a59e94ee.lovable.app-1771706684490.png">
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@Lovable" />
+    <meta name="twitter:image" content="https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a1bac6e0-e5b6-4638-ab79-22a04c6f7566/id-preview-4b03532c--7b7ce59c-7025-4c51-b940-a181a59e94ee.lovable.app-1771706684490.png">
+    <meta property="og:title" content="Palomitas Redonditas">
+  <meta name="twitter:title" content="Palomitas Redonditas">
+  <meta property="og:description" content="Curso de palomitas gourmet con Carmela Vega">
+  <meta name="twitter:description" content="Curso de palomitas gourmet con Carmela Vega">
+</head>
+
+  <body>
+    <script>
+      // One-time cache purge to fix stale/black images (v2)
+      var CACHE_VERSION = 'v2';
+      if (localStorage.getItem('cache-purged') !== CACHE_VERSION) {
+        if ('caches' in window) {
+          caches.keys().then(function(names) {
+            names.forEach(function(name) { caches.delete(name); });
+          });
+        }
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            registrations.forEach(function(r) { r.unregister(); });
+          });
+        }
+        localStorage.setItem('cache-purged', CACHE_VERSION);
+        // Reload after clearing to get fresh assets
+        setTimeout(function() { location.reload(); }, 500);
+      }
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
