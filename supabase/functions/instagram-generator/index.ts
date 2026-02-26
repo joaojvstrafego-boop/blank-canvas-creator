@@ -6,6 +6,27 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const createFallbackImageDataUrl = (topic: string) => {
+  const safeTopic = (topic || "Palomitas Gourmet").replace(/[<>&"']/g, "").slice(0, 80);
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1080 1350'>
+    <defs>
+      <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+        <stop offset='0%' stop-color='#F59E0B'/>
+        <stop offset='50%' stop-color='#EF4444'/>
+        <stop offset='100%' stop-color='#111827'/>
+      </linearGradient>
+    </defs>
+    <rect width='1080' height='1350' fill='url(#g)'/>
+    <circle cx='180' cy='220' r='120' fill='rgba(255,255,255,0.12)'/>
+    <circle cx='920' cy='1120' r='160' fill='rgba(255,255,255,0.1)'/>
+    <text x='90' y='1120' fill='white' font-size='82' font-family='Arial, sans-serif' font-weight='700'>PALOMITAS</text>
+    <text x='90' y='1210' fill='white' font-size='82' font-family='Arial, sans-serif' font-weight='700'>GOURMET</text>
+    <text x='90' y='1270' fill='rgba(255,255,255,0.9)' font-size='34' font-family='Arial, sans-serif'>${safeTopic}</text>
+  </svg>`;
+
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -33,7 +54,7 @@ serve(async (req) => {
     const styleDesc = styleDescriptions[style] || styleDescriptions.vibrant;
     const typeImageDesc = postTypeImageDesc[postType] || postTypeImageDesc.tip;
 
-    // Generate image using Gemini 2.0 Flash (supports image generation)
+    // Generate image using direct Gemini image model
     const imagePrompt = `Generate a professional food photography image. Vertical format 4:5 aspect ratio (1080x1350 pixels, Instagram post format).
 ${typeImageDesc}
 Style: ${styleDesc}
@@ -43,7 +64,7 @@ CRITICAL RULES:
 - This is ONLY a background photo. Pure visual, zero text. Clean photography only.`;
 
     const imageResponsePromise = fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -96,38 +117,42 @@ Responde EXACTAMENTE en este formato JSON (sin markdown, solo JSON puro):
 
     const [imageResponse, textResponse] = await Promise.all([imageResponsePromise, textResponsePromise]);
 
-    // Handle image response
+    let imageUrl = createFallbackImageDataUrl(prompt);
+
+    // Handle image response with graceful fallback (avoid hard failure on model/endpoint issues)
     if (!imageResponse.ok) {
       const errText = await imageResponse.text();
       console.error("Gemini image error:", imageResponse.status, errText);
+
       if (imageResponse.status === 429) {
         return new Response(JSON.stringify({ error: "Límite de solicitudes excedido. Intenta de nuevo." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+
       if (imageResponse.status === 403) {
         return new Response(JSON.stringify({ error: "API key bloqueada. Genera una nueva GEMINI_API_KEY." }), {
           status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      throw new Error(`Image generation failed: ${imageResponse.status}`);
-    }
 
-    const imageData = await imageResponse.json();
-    let imageUrl = "";
+      // For 404/other model errors we continue with fallback imageUrl instead of returning 500
+      console.warn("Using fallback image due to image generation failure");
+    } else {
+      const imageData = await imageResponse.json();
 
-    // Extract image from Gemini response (inline_data format)
-    const parts = imageData?.candidates?.[0]?.content?.parts || [];
-    for (const part of parts) {
-      if (part.inlineData) {
-        imageUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-        break;
+      // Extract image from Gemini response (inlineData format)
+      const parts = imageData?.candidates?.[0]?.content?.parts || [];
+      for (const part of parts) {
+        if (part?.inlineData?.data) {
+          imageUrl = `data:${part.inlineData.mimeType || "image/png"};base64,${part.inlineData.data}`;
+          break;
+        }
       }
-    }
 
-    if (!imageUrl) {
-      console.error("No image in Gemini response:", JSON.stringify(imageData).substring(0, 1000));
-      throw new Error("No image generated");
+      if (!imageUrl || imageUrl.startsWith("data:image/svg+xml")) {
+        console.error("No image in Gemini response, using fallback:", JSON.stringify(imageData).substring(0, 1000));
+      }
     }
 
     // Handle text response
