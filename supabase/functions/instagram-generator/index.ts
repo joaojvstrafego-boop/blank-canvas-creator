@@ -11,8 +11,8 @@ serve(async (req) => {
 
   try {
     const { prompt, style, postType } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
 
     const styleDescriptions: Record<string, string> = {
       elegant: "luxury dark moody food photography, golden rim lighting, bokeh, deep shadows, rich tones",
@@ -33,42 +33,39 @@ serve(async (req) => {
     const styleDesc = styleDescriptions[style] || styleDescriptions.vibrant;
     const typeImageDesc = postTypeImageDesc[postType] || postTypeImageDesc.tip;
 
-    // Generate CLEAN background image (NO text)
-    const imagePrompt = `Professional food photography, vertical format 4:5 aspect ratio (1080x1350 pixels, Instagram post format).
+    // Generate image using Gemini 2.0 Flash (supports image generation)
+    const imagePrompt = `Generate a professional food photography image. Vertical format 4:5 aspect ratio (1080x1350 pixels, Instagram post format).
 ${typeImageDesc}
 Style: ${styleDesc}
 Subject related to: ${prompt}
 CRITICAL RULES:
-- The image MUST be perfectly SQUARE (1:1 ratio), like an Instagram post.
 - DO NOT include ANY text, words, letters, numbers, logos, or watermarks.
 - This is ONLY a background photo. Pure visual, zero text. Clean photography only.`;
 
-    const imageResponsePromise = fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash-image",
-        messages: [{ role: "user", content: imagePrompt }],
-        modalities: ["image", "text"],
-      }),
-    });
+    const imageResponsePromise = fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: imagePrompt }] }],
+          generationConfig: {
+            responseModalities: ["TEXT", "IMAGE"],
+          },
+        }),
+      }
+    );
 
-    // Generate text content + caption in parallel
-    const textResponsePromise = fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content: `Eres una community manager y diseñadora experta para "Palomitas Redonditas", un negocio de palomitas gourmet.
+    // Generate text content + caption using Gemini 2.5 Flash
+    const textResponsePromise = fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: {
+            parts: [{
+              text: `Eres una community manager y diseñadora experta para "Palomitas Redonditas", un negocio de palomitas gourmet.
 
 Debes generar DOS cosas:
 
@@ -87,48 +84,49 @@ Reglas para CAPTION:
 - 15-20 hashtags
 
 Responde EXACTAMENTE en este formato JSON (sin markdown, solo JSON puro):
-{"headline":"TU HEADLINE AQUÍ","subtitle":"Tu subtítulo complementario aquí","caption":"El caption completo con emojis y hashtags aquí"}`,
+{"headline":"TU HEADLINE AQUÍ","subtitle":"Tu subtítulo complementario aquí","caption":"El caption completo con emojis y hashtags aquí"}`
+            }]
           },
-          {
-            role: "user",
-            content: `Tipo de post: ${postType || "tip"}. Tema: ${prompt}.`,
-          },
-        ],
-      }),
-    });
+          contents: [{
+            parts: [{ text: `Tipo de post: ${postType || "tip"}. Tema: ${prompt}.` }]
+          }],
+        }),
+      }
+    );
 
     const [imageResponse, textResponse] = await Promise.all([imageResponsePromise, textResponsePromise]);
 
     // Handle image response
     if (!imageResponse.ok) {
+      const errText = await imageResponse.text();
+      console.error("Gemini image error:", imageResponse.status, errText);
       if (imageResponse.status === 429) {
         return new Response(JSON.stringify({ error: "Límite de solicitudes excedido. Intenta de nuevo." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      if (imageResponse.status === 402) {
-        return new Response(JSON.stringify({ error: "Créditos insuficientes." }), {
-          status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      if (imageResponse.status === 403) {
+        return new Response(JSON.stringify({ error: "API key bloqueada. Genera una nueva GEMINI_API_KEY." }), {
+          status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      const t = await imageResponse.text();
-      console.error("Image generation error:", imageResponse.status, t);
-      throw new Error("Error generating image");
+      throw new Error(`Image generation failed: ${imageResponse.status}`);
     }
 
     const imageData = await imageResponse.json();
-    let imageUrl = imageData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-    if (!imageUrl) {
-      const content = imageData.choices?.[0]?.message?.content;
-      if (typeof content === "string" && content.startsWith("data:image")) {
-        imageUrl = content;
-      } else if (Array.isArray(content)) {
-        const imgPart = content.find((p: any) => p.type === "image_url" || p.type === "image");
-        imageUrl = imgPart?.image_url?.url || imgPart?.url;
+    let imageUrl = "";
+
+    // Extract image from Gemini response (inline_data format)
+    const parts = imageData?.candidates?.[0]?.content?.parts || [];
+    for (const part of parts) {
+      if (part.inlineData) {
+        imageUrl = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+        break;
       }
     }
+
     if (!imageUrl) {
-      console.error("No image in response:", JSON.stringify(imageData).substring(0, 1000));
+      console.error("No image in Gemini response:", JSON.stringify(imageData).substring(0, 1000));
       throw new Error("No image generated");
     }
 
@@ -139,9 +137,11 @@ Responde EXACTAMENTE en este formato JSON (sin markdown, solo JSON puro):
 
     if (textResponse.ok) {
       const textData = await textResponse.json();
-      const raw = textData.choices?.[0]?.message?.content || "";
+      const raw = textData?.candidates?.[0]?.content?.parts
+        ?.map((p: any) => p?.text ?? "")
+        .join("")
+        .trim() || "";
       try {
-        // Extract JSON from response (might have markdown wrapping)
         const jsonMatch = raw.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const parsed = JSON.parse(jsonMatch[0]);
@@ -152,6 +152,9 @@ Responde EXACTAMENTE en este formato JSON (sin markdown, solo JSON puro):
       } catch {
         console.error("Failed to parse text response:", raw.substring(0, 500));
       }
+    } else {
+      const errText = await textResponse.text();
+      console.error("Text generation error:", textResponse.status, errText);
     }
 
     return new Response(JSON.stringify({ imageUrl, headline, subtitle, caption }), {
