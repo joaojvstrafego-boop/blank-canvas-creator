@@ -63,9 +63,12 @@ const SupportChat = () => {
           });
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      const errorContent = "Lo siento, hubo un problema de conexión. Intenta de nuevo. 🍿";
+      let errorContent = "Lo siento, hubo un problema de conexión. Intenta de nuevo. 🍿";
+      if (e?.status === 429 || e?.message?.includes("429")) {
+        errorContent = "⚠️ Se agotó la cuota de la API de Gemini. Por favor, espera un momento e intenta de nuevo, o contacta al administrador.";
+      }
       setMessages((prev) => [...prev, { role: "assistant", content: errorContent }]);
     }
 
