@@ -86,6 +86,38 @@ const thumbnailMap: Record<string, string> = {
   "intro-agridulce": thumbIntroAgridulce,
 };
 
+const pdfResources: Record<string, { file: string; name: string }> = {
+  "pdf-1": { file: "/PALOMITAS_REDONDITAS.pdf", name: "PALOMITAS_REDONDITAS.pdf" },
+  "bonus-publicaciones": { file: "/publicaciones.pdf", name: "publicaciones.pdf" },
+  "bonus-leyendas": { file: "/leyendas.pdf", name: "leyendas.pdf" },
+};
+
+const getPdfResource = (lessonId: string) => pdfResources[lessonId] || pdfResources["pdf-1"];
+
+const openPdfInNewTab = (pdfUrl: string) => {
+  window.open(pdfUrl, "_blank", "noopener,noreferrer");
+};
+
+const handlePdfDownload = async (pdfUrl: string, fileName: string) => {
+  try {
+    const response = await fetch(pdfUrl, { cache: "no-store" });
+    if (!response.ok) throw new Error("PDF unavailable");
+
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+  } catch {
+    openPdfInNewTab(pdfUrl);
+  }
+};
+
 // --- Folder Card (poster style) ---
 const FolderCard = ({ folder, onClick }: { folder: CourseFolder; onClick: () => void }) => {
   const cover = folderCovers[folder.id] || heroBanner;
@@ -225,34 +257,8 @@ const AudioPlayer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void 
 
 // --- PDF Viewer Modal ---
 const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void }) => {
-  const pdfMap: Record<string, { file: string; name: string }> = {
-    "pdf-1": { file: "/PALOMITAS_REDONDITAS.pdf", name: "PALOMITAS_REDONDITAS.pdf" },
-    "bonus-publicaciones": { file: "/publicaciones.pdf", name: "publicaciones.pdf" },
-    "bonus-leyendas": { file: "/leyendas.pdf", name: "leyendas.pdf" },
-  };
-
-  const pdf = pdfMap[lesson.id] || pdfMap["pdf-1"];
+  const pdf = getPdfResource(lesson.id);
   const pdfUrl = pdf.file;
-  const absolutePdfUrl = `${window.location.origin}${pdfUrl}`;
-  const googleViewerUrl = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(absolutePdfUrl)}`;
-
-  const handleDownload = async () => {
-    try {
-      const response = await fetch(pdfUrl);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = pdf.name;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(blobUrl);
-    } catch {
-      // Fallback: open in new tab
-      window.open(pdfUrl, '_blank');
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
@@ -273,7 +279,7 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={handleDownload}
+            onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
             className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
           >
             <Download className="w-4 h-4" />
@@ -297,21 +303,27 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
         </div>
       </div>
       <div className="flex-1 w-full flex flex-col items-center justify-center">
-        <iframe
-          src={googleViewerUrl}
-          className="w-full h-full border-0"
-          title={lesson.title}
-          allowFullScreen
-        />
+        <object
+          data={pdfUrl}
+          type="application/pdf"
+          className="w-full h-full"
+          aria-label={lesson.title}
+        >
+          <iframe src={pdfUrl} className="w-full h-full border-0" title={lesson.title} allowFullScreen />
+        </object>
         <p className="text-xs text-muted-foreground py-2">
           ¿No se ve el PDF?{" "}
           <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
             Ábrelo aquí
           </a>{" "}
           o{" "}
-          <button onClick={handleDownload} className="text-primary underline">
+          <button
+            onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
+            className="text-primary underline"
+          >
             descárgalo
           </button>
+          .
         </p>
       </div>
     </div>
@@ -412,26 +424,10 @@ const FolderView = ({
             />
           </div>
         ) : isPdfFolder ? (
-          /* PDF embedded via Google Docs Viewer */
           <div className="w-full max-w-5xl mx-auto">
             <div className="flex items-center justify-end gap-2 mb-3">
               <button
-                onClick={async () => {
-                  try {
-                    const response = await fetch('/PALOMITAS_REDONDITAS.pdf');
-                    const blob = await response.blob();
-                    const blobUrl = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = blobUrl;
-                    link.download = 'PALOMITAS_REDONDITAS.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(blobUrl);
-                  } catch {
-                    window.open('/PALOMITAS_REDONDITAS.pdf', '_blank');
-                  }
-                }}
+                onClick={() => handlePdfDownload("/PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
                 className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
               >
                 <Download className="w-4 h-4" />
@@ -447,12 +443,19 @@ const FolderView = ({
                 <span>Abrir</span>
               </a>
             </div>
-            <iframe
-              src={`https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(window.location.origin + '/PALOMITAS_REDONDITAS.pdf')}`}
+            <object
+              data="/PALOMITAS_REDONDITAS.pdf"
+              type="application/pdf"
               className="w-full h-[70vh] rounded-lg border border-border"
-              title="Recetas en PDF"
-              allowFullScreen
-            />
+              aria-label="Recetas en PDF"
+            >
+              <iframe
+                src="/PALOMITAS_REDONDITAS.pdf"
+                className="w-full h-[70vh] rounded-lg border border-border"
+                title="Recetas en PDF"
+                allowFullScreen
+              />
+            </object>
           </div>
         ) : isBonusFolder ? (
           /* Bonus folder - show PDF lessons as downloadable cards */
