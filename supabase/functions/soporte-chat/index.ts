@@ -304,52 +304,62 @@ serve(async (req) => {
 
   try {
     const { messages } = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
+    const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
+    if (!GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is not configured");
+
+    const contents = (Array.isArray(messages) ? messages : [])
+      .filter((m: any) => m?.content)
+      .map((m: any) => ({
+        role: m.role === "assistant" ? "model" : "user",
+        parts: [{ text: String(m.content) }],
+      }));
 
     const response = await fetch(
-      "https://ai.gateway.lovable.dev/v1/chat/completions",
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${LOVABLE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "google/gemini-3-flash-preview",
-          messages: [
-            { role: "system", content: SYSTEM_PROMPT },
-            ...messages,
-          ],
-          stream: true,
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents,
         }),
       }
     );
 
     if (!response.ok) {
+      const errText = await response.text();
+      console.error("Gemini API error:", response.status, errText);
+
       if (response.status === 429) {
         return new Response(
           JSON.stringify({ error: "Demasiadas solicitudes, intenta de nuevo en unos segundos." }),
           { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      if (response.status === 402) {
+
+      if (response.status === 403) {
         return new Response(
-          JSON.stringify({ error: "Servicio temporalmente no disponible." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ error: "La API key de Google fue bloqueada o reportada. Genera una nueva key y actualiza GEMINI_API_KEY." }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
-      const t = await response.text();
-      console.error("AI gateway error:", response.status, t);
+
       return new Response(
         JSON.stringify({ error: "Error del servidor de IA" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: response.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    return new Response(response.body, {
-      headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
-    });
+    const data = await response.json();
+    const text = data?.candidates?.[0]?.content?.parts
+      ?.map((p: any) => p?.text ?? "")
+      .join("")
+      .trim();
+
+    return new Response(
+      JSON.stringify({ text: text || "No pude generar respuesta en este momento." }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   } catch (e) {
     console.error("chat error:", e);
     return new Response(

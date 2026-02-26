@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, Loader2 } from "lucide-react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+
 
 type Msg = { role: "user" | "assistant"; content: string };
 
-const genAI = new GoogleGenerativeAI("AIzaSyDpOSo4pWJzPBlijwN0kN9Rls5XQkwyBm0");
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/soporte-chat`;
 
 const SYSTEM_PROMPT = `Eres "Carmela IA", la asistente virtual experta en palomitas gourmet del curso "Palomitas Redonditas" de Carmela Vega. Respondes SIEMPRE en español latinoamericano neutro. Eres amable, profesional y apasionada por las palomitas.
 
@@ -36,52 +36,34 @@ const SupportChat = () => {
     setInput("");
     setIsLoading(true);
 
-    let assistantSoFar = "";
-    const upsertAssistant = (chunk: string) => {
-      assistantSoFar += chunk;
-      const content = assistantSoFar;
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (last?.role === "assistant") {
-          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content } : m));
-        }
-        return [...prev, { role: "assistant", content }];
-      });
-    };
-
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
-      const history = newMessages.map((m) => ({
-        role: m.role === "user" ? ("user" as const) : ("model" as const),
-        parts: [{ text: m.content }],
-      }));
-
-      const chat = model.startChat({
-        history: [
-          { role: "user", parts: [{ text: "Instrucciones del sistema: " + SYSTEM_PROMPT }] },
-          { role: "model", parts: [{ text: "¡Entendido! Soy Carmela IA 🍿, lista para ayudarte con todo sobre palomitas gourmet." }] },
-          ...history.slice(0, -1),
-        ],
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ messages: newMessages }),
       });
 
-      const result = await chat.sendMessageStream(text);
-
-      for await (const chunk of result.stream) {
-        const chunkText = chunk.text();
-        if (chunkText) upsertAssistant(chunkText);
+      if (!resp.ok) {
+        const errData = await resp.json().catch(() => ({}));
+        const errMessage = errData?.error || "Lo siento, hubo un problema de conexión. Intenta de nuevo. 🍿";
+        throw { status: resp.status, message: errMessage };
       }
+
+      const data = await resp.json();
+      const assistantText = (data?.text || "Lo siento, no pude generar respuesta ahora.").trim();
+      setMessages((prev) => [...prev, { role: "assistant", content: assistantText }]);
     } catch (e: any) {
       console.error(e);
       let errorContent = "Lo siento, hubo un problema de conexión. Intenta de nuevo. 🍿";
-      if (e?.status === 404 || e?.message?.includes("no longer available")) {
-        errorContent = "⚠️ Esse modelo do Google foi descontinuado. Já atualizei para um modelo novo; recarregue a página e tente novamente.";
+      if (e?.status === 403 || e?.message?.includes("blocked") || e?.message?.includes("reportada")) {
+        errorContent = "⚠️ La API key de Google está bloqueada/filtrada. Genera una nueva y actualízala en GEMINI_API_KEY.";
       } else if (e?.status === 429 || e?.message?.includes("429")) {
         errorContent = "⚠️ Se agotó la cuota de la API. Espera un momento e intenta de nuevo.";
       }
-      if (assistantSoFar === "") {
-        setMessages((prev) => [...prev, { role: "assistant", content: errorContent }]);
-      }
+      setMessages((prev) => [...prev, { role: "assistant", content: errorContent }]);
     }
 
     setIsLoading(false);
