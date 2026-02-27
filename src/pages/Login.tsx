@@ -42,7 +42,11 @@ const Login = () => {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) {
         if (error.message.includes("already registered")) {
-          setError("Este correo ya está registrado. Inicia sesión.");
+          // Try to sign in instead
+          const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+          if (loginError) {
+            setError("Este correo ya está registrado. Verifica tu contraseña o recupera tu contraseña.");
+          }
         } else {
           setError(error.message);
         }
@@ -115,12 +119,6 @@ const Login = () => {
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Entrar"}
             </Button>
           </form>
-          <button
-            onClick={() => switchView("forgot")}
-            className="text-muted-foreground text-xs text-center mt-3 w-full hover:text-foreground transition-colors"
-          >
-            ¿Olvidaste tu contraseña?
-          </button>
         </div>
       )}
 
@@ -196,13 +194,18 @@ const Login = () => {
         </div>
       )}
 
-      {/* Toggle login/signup */}
+      {/* Toggle login/signup/forgot */}
       {view === "login" && (
-        <div className="w-full max-w-sm bg-card/50 rounded-xl p-4 border border-border mb-8 text-center">
-          <p className="text-muted-foreground text-sm mb-2">¿No tienes cuenta?</p>
-          <Button variant="outline" className="w-full" onClick={() => switchView("signup")}>
-            Crear una cuenta nueva
-          </Button>
+        <div className="w-full max-w-sm bg-card/50 rounded-xl p-4 border border-border mb-8 text-center space-y-3">
+          <p className="text-muted-foreground text-sm">¿No tienes cuenta o olvidaste tu contraseña?</p>
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1" onClick={() => switchView("signup")}>
+              Crear cuenta
+            </Button>
+            <Button variant="outline" className="flex-1" onClick={() => switchView("forgot")}>
+              Recuperar contraseña
+            </Button>
+          </div>
         </div>
       )}
 
