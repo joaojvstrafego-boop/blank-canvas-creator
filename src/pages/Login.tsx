@@ -1,40 +1,73 @@
 import { useState } from "react";
-import { ChefHat, Smartphone, Share, PlusSquare, MoreVertical, Download, Loader2 } from "lucide-react";
+import { ChefHat, Smartphone, Share, PlusSquare, MoreVertical, Download, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+
+type View = "login" | "signup" | "forgot";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
   const [success, setSuccess] = useState("");
+  const [view, setView] = useState<View>("login");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const switchView = (v: View) => {
+    setView(v);
     setError("");
     setSuccess("");
-    setLoading(true);
+  };
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) {
-          if (error.message.includes("already registered")) {
-            setError("Este correo ya está registrado. Inicia sesión.");
-          } else {
-            setError(error.message);
-          }
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) setError("Correo o contraseña incorrectos.");
+    } catch {
+      setError("Error de conexión. Intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        if (error.message.includes("already registered")) {
+          setError("Este correo ya está registrado. Inicia sesión.");
         } else {
-          setSuccess("¡Cuenta creada! Ya puedes acceder al curso.");
+          setError(error.message);
         }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) {
-          setError("Correo o contraseña incorrectos.");
-        }
+        setSuccess("¡Cuenta creada! Ya puedes acceder al curso.");
+      }
+    } catch {
+      setError("Error de conexión. Intenta de nuevo.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgot = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) {
+        setError(error.message);
+      } else {
+        setSuccess("¡Listo! Revisa tu correo para restablecer tu contraseña.");
       }
     } catch {
       setError("Error de conexión. Intenta de nuevo.");
@@ -55,40 +88,123 @@ const Login = () => {
         </span>
       </div>
 
-      {/* Login Card */}
-      <div className="w-full max-w-sm bg-card rounded-xl p-6 border border-border mb-8">
-        <h2 className="font-display text-2xl text-center text-foreground mb-6">
-          {isSignUp ? "CREAR CUENTA" : "INICIAR SESIÓN"}
-        </h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            type="email"
-            placeholder="Tu correo electrónico"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <Input
-            type="password"
-            placeholder="Contraseña (mínimo 6 caracteres)"
-            value={password}
-            onChange={(e) => { setPassword(e.target.value); setError(""); }}
-            required
-            minLength={6}
-          />
-          {error && <p className="text-destructive text-sm">{error}</p>}
-          {success && <p className="text-accent text-sm">{success}</p>}
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : isSignUp ? "Crear cuenta" : "Entrar"}
+      {/* ====== LOGIN ====== */}
+      {view === "login" && (
+        <div className="w-full max-w-sm bg-card rounded-xl p-6 border border-border mb-4">
+          <h2 className="font-display text-2xl text-center text-foreground mb-6">
+            INICIAR SESIÓN
+          </h2>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <Input
+              type="email"
+              placeholder="Tu correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setError(""); }}
+              required
+              minLength={6}
+            />
+            {error && <p className="text-destructive text-sm">{error}</p>}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Entrar"}
+            </Button>
+          </form>
+          <button
+            onClick={() => switchView("forgot")}
+            className="text-muted-foreground text-xs text-center mt-3 w-full hover:text-foreground transition-colors"
+          >
+            ¿Olvidaste tu contraseña?
+          </button>
+        </div>
+      )}
+
+      {/* ====== SIGNUP ====== */}
+      {view === "signup" && (
+        <div className="w-full max-w-sm bg-card rounded-xl p-6 border border-border mb-4">
+          <button
+            onClick={() => switchView("login")}
+            className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors text-sm mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" /> Volver
+          </button>
+          <h2 className="font-display text-2xl text-center text-foreground mb-2">
+            CREAR CUENTA
+          </h2>
+          <p className="text-muted-foreground text-sm text-center mb-6">
+            Crea tu cuenta para acceder al curso
+          </p>
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <Input
+              type="email"
+              placeholder="Tu correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <Input
+              type="password"
+              placeholder="Crea una contraseña (mínimo 6 caracteres)"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setError(""); }}
+              required
+              minLength={6}
+            />
+            {error && <p className="text-destructive text-sm">{error}</p>}
+            {success && <p className="text-accent text-sm">{success}</p>}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Crear mi cuenta"}
+            </Button>
+          </form>
+        </div>
+      )}
+
+      {/* ====== FORGOT PASSWORD ====== */}
+      {view === "forgot" && (
+        <div className="w-full max-w-sm bg-card rounded-xl p-6 border border-border mb-4">
+          <button
+            onClick={() => switchView("login")}
+            className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors text-sm mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" /> Volver
+          </button>
+          <h2 className="font-display text-2xl text-center text-foreground mb-2">
+            RECUPERAR CONTRASEÑA
+          </h2>
+          <p className="text-muted-foreground text-sm text-center mb-6">
+            Te enviaremos un enlace para restablecer tu contraseña
+          </p>
+          <form onSubmit={handleForgot} className="space-y-4">
+            <Input
+              type="email"
+              placeholder="Tu correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            {error && <p className="text-destructive text-sm">{error}</p>}
+            {success && <p className="text-accent text-sm">{success}</p>}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Enviar enlace"}
+            </Button>
+          </form>
+        </div>
+      )}
+
+      {/* Toggle login/signup */}
+      {view === "login" && (
+        <div className="w-full max-w-sm bg-card/50 rounded-xl p-4 border border-border mb-8 text-center">
+          <p className="text-muted-foreground text-sm mb-2">¿No tienes cuenta?</p>
+          <Button variant="outline" className="w-full" onClick={() => switchView("signup")}>
+            Crear una cuenta nueva
           </Button>
-        </form>
-        <button
-          onClick={() => { setIsSignUp(!isSignUp); setError(""); setSuccess(""); }}
-          className="text-muted-foreground text-sm text-center mt-4 w-full hover:text-foreground transition-colors"
-        >
-          {isSignUp ? "¿Ya tienes cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate"}
-        </button>
-      </div>
+        </div>
+      )}
 
       {/* Install Instructions */}
       <div className="w-full max-w-sm space-y-4">
