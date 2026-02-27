@@ -194,18 +194,13 @@ const Login = () => {
         </div>
       )}
 
-      {/* Toggle login/signup/forgot */}
+      {/* Toggle login/signup */}
       {view === "login" && (
         <div className="w-full max-w-sm bg-card/50 rounded-xl p-4 border border-border mb-8 text-center space-y-3">
           <p className="text-muted-foreground text-sm">¿No tienes cuenta o olvidaste tu contraseña?</p>
-          <div className="flex gap-2">
-            <Button variant="outline" className="flex-1" onClick={() => switchView("signup")}>
-              Crear cuenta
-            </Button>
-            <Button variant="outline" className="flex-1" onClick={() => switchView("forgot")}>
-              Recuperar contraseña
-            </Button>
-          </div>
+          <Button variant="outline" className="w-full" onClick={() => switchView("signup")}>
+            Crear cuenta
+          </Button>
         </div>
       )}
 
