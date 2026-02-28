@@ -24,7 +24,8 @@ export default defineConfig(({ mode }) => ({
         skipWaiting: true,
         clientsClaim: true,
         // Cache app shell and assets
-        globPatterns: ["**/*.{js,css,html,ico,png,jpg,jpeg,svg,mp3,pdf}"],
+        globPatterns: ["**/*.{js,css,html,ico,png,jpg,jpeg,svg}"],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
       manifest: {
         name: "Palomitas Redonditas",
