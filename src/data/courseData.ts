@@ -369,6 +369,21 @@ export const courseFolders: CourseFolder[] = [
     ],
   },
   {
+    id: "bonus-recetas-alternativas",
+    title: "Bonus 2 - Recetas Alternativas",
+    description: "Recetas alternativas en PDF para expandir tu menú de palomitas",
+    icon: FileText,
+    color: "accent",
+    lessons: [
+      {
+        id: "bonus-recetas-alt-pdf",
+        title: "Recetas Alternativas",
+        description: "PDF con recetas alternativas para tu negocio de palomitas",
+        type: "pdf",
+      },
+    ],
+  },
+  {
     id: "calculadora",
     title: "Calculadora",
     description: "Calcula el precio de tus palomitas",
