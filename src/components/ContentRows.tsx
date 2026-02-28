@@ -266,8 +266,6 @@ const AudioPlayer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void 
 const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void }) => {
   const pdf = getPdfResource(lesson.id);
   const pdfFileName = pdf.file;
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-card shrink-0">
@@ -293,71 +291,37 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
         </button>
       </div>
 
-      {isMobile ? (
-        /* Mobile: show big action buttons instead of trying to render PDF inline */
-        <div className="flex-1 flex flex-col items-center justify-center px-6 gap-6">
-          <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
-            <FileText className="w-12 h-12 text-primary" />
-          </div>
-          <div className="text-center">
-            <h3 className="font-display text-xl tracking-wider text-foreground mb-2">{lesson.title}</h3>
-            <p className="text-sm text-muted-foreground">{lesson.description}</p>
-          </div>
-          <div className="flex flex-col gap-3 w-full max-w-xs">
-            <a
-              href={getDownloadUrl(pdfFileName)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-primary text-primary-foreground text-lg font-medium hover:bg-primary/90 transition-colors"
-            >
-              <Download className="w-6 h-6" />
-              Descargar PDF
-            </a>
-            <a
-              href={getOpenUrl(pdfFileName)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors"
-            >
-              <ExternalLink className="w-6 h-6" />
-              Abrir en navegador
-            </a>
-          </div>
+      <div className="flex-1 w-full flex flex-col">
+        <div className="flex items-center justify-end gap-2 px-4 py-2 shrink-0">
+          <a
+            href={getDownloadUrl(pdfFileName)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Descargar
+          </a>
+          <a
+            href={getOpenUrl(pdfFileName)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
+          >
+            <ExternalLink className="w-4 h-4" />
+            Abrir
+          </a>
         </div>
-      ) : (
-        /* Desktop: embed Google Drive preview */
-        <div className="flex-1 w-full flex flex-col">
-          <div className="flex items-center justify-end gap-2 px-4 py-2 shrink-0">
-            <a
-              href={getDownloadUrl(pdfFileName)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Descargar
-            </a>
-            <a
-              href={getOpenUrl(pdfFileName)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              Abrir
-            </a>
-          </div>
-          <div className="flex-1">
-            <iframe
-              src={getViewUrl(pdfFileName)}
-              className="w-full h-full border-0 rounded-lg"
-              title={lesson.title}
-              allow="autoplay"
-              allowFullScreen
-            />
-          </div>
+        <div className="flex-1 min-h-[70vh] md:min-h-0">
+          <iframe
+            src={getViewUrl(pdfFileName)}
+            className="w-full h-full border-0 rounded-lg"
+            title={lesson.title}
+            allow="autoplay"
+            allowFullScreen
+          />
         </div>
-      )}
+      </div>
     </div>
   );
 };
