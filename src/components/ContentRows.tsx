@@ -106,7 +106,7 @@ const getPdfResource = (lessonId: string) => pdfResources[lessonId] || pdfResour
 
 // Use Google Drive when available, otherwise Supabase Storage
 const getDrivePreviewUrl = (fileId: string) => `https://drive.google.com/file/d/${fileId}/preview`;
-const getDriveDownloadUrl = (fileId: string) => `https://drive.google.com/uc?export=download&id=${fileId}`;
+const getDriveDownloadUrl = (fileId: string) => `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
 const getDriveViewUrl = (fileId: string) => `https://drive.google.com/file/d/${fileId}/view`;
 
 const getViewUrl = (fileName: string) => {
