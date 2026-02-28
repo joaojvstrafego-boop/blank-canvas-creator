@@ -89,14 +89,14 @@ export const courseFolders: CourseFolder[] = [
   },
   {
     id: "conservar-palomitas",
-    title: "Cómo conservar las palomitas",
+    title: "Cómo conservar",
     description: "Aprende a conservar tus palomitas correctamente",
     icon: Video,
     color: "primary",
     lessons: [
       {
         id: "conservar-video",
-        title: "Cómo conservar las palomitas",
+        title: "Cómo conservar",
         description: "Tips para mantener tus palomitas frescas",
         type: "video",
         videoUrl: "https://drive.google.com/file/d/1xpJz1frFs_fcvhclTHbXBL9fAwZyG1Ur/preview",
