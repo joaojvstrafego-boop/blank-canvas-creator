@@ -11,6 +11,11 @@ import coverAgridulces from "@/assets/cover-agridulces.jpg";
 import coverBonusInstagram from "@/assets/cover-bonus-instagram.jpg";
 import coverInstagramAI from "@/assets/cover-instagram-ai.png";
 import coverSoporte from "@/assets/cover-soporte.jpg";
+import coverUtensilios from "@/assets/cover-utensilios.jpg";
+import coverTiposMaiz from "@/assets/cover-tipos-maiz.jpg";
+import coverTiposChocolate from "@/assets/cover-tipos-chocolate.jpg";
+import coverConservar from "@/assets/cover-conservar.jpg";
+import coverCarameloAterciopelado from "@/assets/cover-caramelo-aterciopelado.jpg";
 
 const SupportChat = lazy(() => import("@/components/SupportChat"));
 const InstagramGenerator = lazy(() => import("@/components/InstagramGenerator"));
@@ -53,6 +58,11 @@ const folderCovers: Record<string, string> = {
   "instagram-ai": coverInstagramAI,
   orcamentos: coverOrcamentos,
   soporte: coverSoporte,
+  utensilios: coverUtensilios,
+  "tipos-maiz": coverTiposMaiz,
+  "tipos-chocolate": coverTiposChocolate,
+  "conservar-palomitas": coverConservar,
+  "caramelo-aterciopelado": coverCarameloAterciopelado,
 };
 
 const thumbnailMap: Record<string, string> = {
