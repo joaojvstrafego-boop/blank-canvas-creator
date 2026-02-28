@@ -265,6 +265,7 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
   const pdf = getPdfResource(lesson.id);
   const pdfUrl = pdf.file;
   const pdfAccessUrl = getPdfAccessUrl(pdfUrl);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   return (
     <div className="fixed inset-0 z-50 bg-background flex flex-col">
@@ -283,55 +284,90 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
             <h2 className="font-display text-base md:text-lg tracking-wider text-foreground">{lesson.title}</h2>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
-          >
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">Descargar</span>
-          </button>
-          <a
-            href={pdfAccessUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
-          >
-            <ExternalLink className="w-4 h-4" />
-            <span className="hidden sm:inline">Abrir</span>
-          </a>
-          <button
-            onClick={onClose}
-            className="text-muted-foreground hover:text-foreground transition-colors ml-1"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-      <div className="flex-1 w-full flex flex-col items-center justify-center">
-        <object
-          data={pdfAccessUrl}
-          type="application/pdf"
-          className="w-full h-full"
-          aria-label={lesson.title}
+        <button
+          onClick={onClose}
+          className="text-muted-foreground hover:text-foreground transition-colors"
         >
-          <iframe src={pdfAccessUrl} className="w-full h-full border-0" title={lesson.title} allowFullScreen />
-        </object>
-        <p className="text-xs text-muted-foreground py-2">
-          ¿No se ve el PDF?{" "}
-          <a href={pdfAccessUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-            Ábrelo aquí
-          </a>{" "}
-          o{" "}
-          <button
-            onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
-            className="text-primary underline"
-          >
-            descárgalo
-          </button>
-          .
-        </p>
+          <X className="w-5 h-5" />
+        </button>
       </div>
+
+      {isMobile ? (
+        /* Mobile: show big action buttons instead of trying to render PDF inline */
+        <div className="flex-1 flex flex-col items-center justify-center px-6 gap-6">
+          <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
+            <FileText className="w-12 h-12 text-primary" />
+          </div>
+          <div className="text-center">
+            <h3 className="font-display text-xl tracking-wider text-foreground mb-2">{lesson.title}</h3>
+            <p className="text-sm text-muted-foreground">{lesson.description}</p>
+          </div>
+          <div className="flex flex-col gap-3 w-full max-w-xs">
+            <button
+              onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
+              className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-primary text-primary-foreground text-lg font-medium hover:bg-primary/90 transition-colors"
+            >
+              <Download className="w-6 h-6" />
+              Descargar PDF
+            </button>
+            <a
+              href={pdfAccessUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors"
+            >
+              <ExternalLink className="w-6 h-6" />
+              Abrir en navegador
+            </a>
+          </div>
+        </div>
+      ) : (
+        /* Desktop: render PDF inline with fallback */
+        <div className="flex-1 w-full flex flex-col">
+          <div className="flex items-center justify-end gap-2 px-4 py-2 shrink-0">
+            <button
+              onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              Descargar
+            </button>
+            <a
+              href={pdfAccessUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+              Abrir
+            </a>
+          </div>
+          <div className="flex-1">
+            <object
+              data={pdfAccessUrl}
+              type="application/pdf"
+              className="w-full h-full"
+              aria-label={lesson.title}
+            >
+              <iframe src={pdfAccessUrl} className="w-full h-full border-0" title={lesson.title} allowFullScreen />
+            </object>
+          </div>
+          <p className="text-xs text-muted-foreground py-2 text-center">
+            ¿No se ve el PDF?{" "}
+            <a href={pdfAccessUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+              Ábrelo aquí
+            </a>{" "}
+            o{" "}
+            <button
+              onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
+              className="text-primary underline"
+            >
+              descárgalo
+            </button>
+            .
+          </p>
+        </div>
+      )}
     </div>
   );
 };
@@ -339,27 +375,60 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
 // --- Scrollable Row ---
 const ScrollRow = ({ children }: { children: React.ReactNode }) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+
+  const updateArrows = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setShowLeftArrow(el.scrollLeft > 10);
+    setShowRightArrow(el.scrollLeft < el.scrollWidth - el.clientWidth - 10);
+  };
+
   const scroll = (dir: "left" | "right") => {
     scrollRef.current?.scrollBy({ left: dir === "left" ? -300 : 300, behavior: "smooth" });
   };
 
   return (
-    <div className="group/row relative">
-      <button
-        onClick={() => scroll("left")}
-        className="absolute left-0 top-0 bottom-0 z-10 w-10 bg-gradient-to-r from-background to-transparent flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
-      >
-        <ChevronLeft className="w-6 h-6 text-foreground" />
-      </button>
-      <div ref={scrollRef} className="flex gap-3 px-4 md:px-12 overflow-x-auto scrollbar-hide">
-        {children}
+    <div className="relative">
+      {/* Swipe hint for mobile */}
+      <div className="flex items-center gap-2 px-4 md:px-12 mb-2 md:hidden">
+        <div className="flex items-center gap-1 text-xs text-muted-foreground animate-pulse">
+          <ChevronLeft className="w-3 h-3" />
+          <span>Desliza para ver más</span>
+          <ChevronRight className="w-3 h-3" />
+        </div>
       </div>
-      <button
-        onClick={() => scroll("right")}
-        className="absolute right-0 top-0 bottom-0 z-10 w-10 bg-gradient-to-l from-background to-transparent flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity"
-      >
-        <ChevronRight className="w-6 h-6 text-foreground" />
-      </button>
+
+      <div className="group/row relative">
+        {/* Left arrow - always visible when scrolled */}
+        <button
+          onClick={() => scroll("left")}
+          className={`absolute left-0 top-0 bottom-0 z-10 w-12 bg-gradient-to-r from-background via-background/80 to-transparent flex items-center justify-center transition-opacity ${showLeftArrow ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        >
+          <div className="w-8 h-8 rounded-full bg-card/90 border border-border flex items-center justify-center shadow-lg">
+            <ChevronLeft className="w-5 h-5 text-foreground" />
+          </div>
+        </button>
+
+        <div
+          ref={scrollRef}
+          className="flex gap-3 px-4 md:px-12 overflow-x-auto scrollbar-hide"
+          onScroll={updateArrows}
+        >
+          {children}
+        </div>
+
+        {/* Right arrow - visible by default to hint there's more */}
+        <button
+          onClick={() => scroll("right")}
+          className={`absolute right-0 top-0 bottom-0 z-10 w-12 bg-gradient-to-l from-background via-background/80 to-transparent flex items-center justify-center transition-opacity ${showRightArrow ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+        >
+          <div className="w-8 h-8 rounded-full bg-card/90 border border-border flex items-center justify-center shadow-lg animate-pulse">
+            <ChevronRight className="w-5 h-5 text-foreground" />
+          </div>
+        </button>
+      </div>
     </div>
   );
 };
@@ -431,37 +500,59 @@ const FolderView = ({
           </div>
         ) : isPdfFolder ? (
           <div className="w-full max-w-5xl mx-auto">
-            <div className="flex items-center justify-end gap-2 mb-3">
+            {/* Mobile: big action buttons */}
+            <div className="flex flex-col items-center gap-4 mb-4 sm:hidden">
               <button
                 onClick={() => handlePdfDownload("/PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+                className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-primary text-primary-foreground text-lg font-medium hover:bg-primary/90 transition-colors w-full max-w-xs"
               >
-                <Download className="w-4 h-4" />
-                <span>Descargar</span>
+                <Download className="w-6 h-6" />
+                Descargar PDF
               </button>
               <a
                 href={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
+                className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors w-full max-w-xs"
               >
-                <ExternalLink className="w-4 h-4" />
-                <span>Abrir</span>
+                <ExternalLink className="w-6 h-6" />
+                Abrir en navegador
               </a>
             </div>
-            <object
-              data={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
-              type="application/pdf"
-              className="w-full h-[70vh] rounded-lg border border-border"
-              aria-label="Recetas en PDF"
-            >
-              <iframe
-                src={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
+            {/* Desktop: inline viewer */}
+            <div className="hidden sm:block">
+              <div className="flex items-center justify-end gap-2 mb-3">
+                <button
+                  onClick={() => handlePdfDownload("/PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Descargar</span>
+                </button>
+                <a
+                  href={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Abrir</span>
+                </a>
+              </div>
+              <object
+                data={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
+                type="application/pdf"
                 className="w-full h-[70vh] rounded-lg border border-border"
-                title="Recetas en PDF"
-                allowFullScreen
-              />
-            </object>
+                aria-label="Recetas en PDF"
+              >
+                <iframe
+                  src={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
+                  className="w-full h-[70vh] rounded-lg border border-border"
+                  title="Recetas en PDF"
+                  allowFullScreen
+                />
+              </object>
+            </div>
           </div>
         ) : isBonusFolder ? (
           /* Bonus folder - show PDF lessons as downloadable cards */
