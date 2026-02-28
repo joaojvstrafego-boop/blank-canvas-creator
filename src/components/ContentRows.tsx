@@ -349,10 +349,10 @@ const ScrollRow = ({ children }: { children: React.ReactNode }) => {
     <div className="relative">
       {/* Swipe hint for mobile */}
       <div className="flex items-center gap-2 px-4 md:px-12 mb-3 md:hidden">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground animate-pulse">
-          <ChevronLeft className="w-4 h-4" />
-          <span className="font-medium">Desliza para ver más</span>
-          <ChevronRight className="w-4 h-4" />
+        <div className="flex items-center gap-2 text-base text-muted-foreground animate-pulse">
+          <ChevronLeft className="w-5 h-5" />
+          <span className="font-semibold">Desliza para ver más</span>
+          <ChevronRight className="w-5 h-5" />
         </div>
       </div>
 
