@@ -416,10 +416,10 @@ const FolderView = ({
         <div className="absolute bottom-0 left-0 right-0 px-4 md:px-12 pb-6">
           <button
             onClick={onBack}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-3"
+            className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full shadow-lg hover:bg-primary/90 transition-colors mb-3"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm">Volver</span>
+            <span className="text-sm font-semibold">← Volver al menú</span>
           </button>
           <h2 className="font-display text-2xl md:text-4xl tracking-wider text-foreground">
             {folder.title}
