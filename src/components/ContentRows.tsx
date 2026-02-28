@@ -664,15 +664,35 @@ const ContentRows = () => {
     );
   }
 
+  const bonusIds = ["bonus-instagram", "calculadora", "instagram-ai", "orcamentos", "soporte"];
+  const mainFolders = courseFolders.filter((f) => !bonusIds.includes(f.id));
+  const bonusFolders = courseFolders.filter((f) => bonusIds.includes(f.id));
+
   return (
     <div className="-mt-16 relative z-10 pb-16">
-      {/* Folder covers row */}
+      {/* Main course modules */}
       <div className="mb-10">
         <h3 className="font-display text-xl md:text-2xl tracking-wider text-foreground px-4 md:px-12 mb-3">
           MÓDULOS DEL CURSO
         </h3>
         <ScrollRow>
-          {courseFolders.map((folder) => (
+          {mainFolders.map((folder) => (
+            <FolderCard
+              key={folder.id}
+              folder={folder}
+              onClick={() => setOpenFolder(folder.id)}
+            />
+          ))}
+        </ScrollRow>
+      </div>
+
+      {/* Bonus modules */}
+      <div className="mb-10">
+        <h3 className="font-display text-xl md:text-2xl tracking-wider text-foreground px-4 md:px-12 mb-3">
+          BONUS
+        </h3>
+        <ScrollRow>
+          {bonusFolders.map((folder) => (
             <FolderCard
               key={folder.id}
               folder={folder}
