@@ -456,57 +456,33 @@ const FolderView = ({
           </div>
         ) : isPdfFolder ? (
           <div className="w-full max-w-5xl mx-auto">
-            {/* Mobile: big action buttons */}
-            <div className="flex flex-col items-center gap-4 mb-4 sm:hidden">
+            <div className="flex items-center justify-center gap-3 flex-wrap mb-4">
               <a
                 href={getDownloadUrl("PALOMITAS_REDONDITAS.pdf")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-primary text-primary-foreground text-lg font-medium hover:bg-primary/90 transition-colors w-full max-w-xs"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
               >
-                <Download className="w-6 h-6" />
+                <Download className="w-5 h-5" />
                 Descargar PDF
               </a>
               <a
                 href={getOpenUrl("PALOMITAS_REDONDITAS.pdf")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors w-full max-w-xs"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-muted text-foreground font-medium hover:bg-muted/80 transition-colors"
               >
-                <ExternalLink className="w-6 h-6" />
+                <ExternalLink className="w-5 h-5" />
                 Abrir en navegador
               </a>
             </div>
-            {/* Desktop: embed Google Drive preview */}
-            <div className="hidden sm:block">
-              <div className="flex items-center justify-end gap-2 mb-3">
-                <a
-                  href={getDownloadUrl("PALOMITAS_REDONDITAS.pdf")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Descargar</span>
-                </a>
-                <a
-                  href={getOpenUrl("PALOMITAS_REDONDITAS.pdf")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Abrir</span>
-                </a>
-              </div>
-              <iframe
-                src={getViewUrl("PALOMITAS_REDONDITAS.pdf")}
-                className="w-full h-[70vh] rounded-lg border border-border"
-                title="Recetas en PDF"
-                allow="autoplay"
-                allowFullScreen
-              />
-            </div>
+            <iframe
+              src={getViewUrl("PALOMITAS_REDONDITAS.pdf")}
+              className="w-full h-[70vh] rounded-lg border border-border"
+              title="Recetas en PDF"
+              allow="autoplay"
+              allowFullScreen
+            />
           </div>
         ) : isBonusFolder ? (
           /* Bonus folder - show PDF lessons as downloadable cards */
