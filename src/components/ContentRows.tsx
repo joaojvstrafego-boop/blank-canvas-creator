@@ -100,6 +100,9 @@ const getPdfResource = (lessonId: string) => pdfResources[lessonId] || pdfResour
 
 const getFileUrl = (fileName: string) => `${SUPABASE_STORAGE_BASE}/${fileName}`;
 
+const getGoogleViewerUrl = (fileName: string) =>
+  `https://docs.google.com/gview?url=${encodeURIComponent(getFileUrl(fileName))}&embedded=true`;
+
 // Fallback: try Supabase first, then local
 const getFileUrlWithFallback = async (fileName: string): Promise<string> => {
   const supaUrl = getFileUrl(fileName);
@@ -359,14 +362,12 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
             </a>
           </div>
           <div className="flex-1">
-            <object
-              data={pdfViewUrl}
-              type="application/pdf"
-              className="w-full h-full"
-              aria-label={lesson.title}
-            >
-              <iframe src={pdfViewUrl} className="w-full h-full border-0" title={lesson.title} allowFullScreen />
-            </object>
+            <iframe
+              src={getGoogleViewerUrl(pdfFileName)}
+              className="w-full h-full border-0"
+              title={lesson.title}
+              allowFullScreen
+            />
           </div>
           <p className="text-xs text-muted-foreground py-2 text-center">
             ¿No se ve el PDF?{" "}
@@ -555,19 +556,12 @@ const FolderView = ({
                   <span>Abrir</span>
                 </a>
               </div>
-              <object
-                data={getFileUrl("PALOMITAS_REDONDITAS.pdf")}
-                type="application/pdf"
+              <iframe
+                src={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
                 className="w-full h-[70vh] rounded-lg border border-border"
-                aria-label="Recetas en PDF"
-              >
-                <iframe
-                  src={getFileUrl("PALOMITAS_REDONDITAS.pdf")}
-                  className="w-full h-[70vh] rounded-lg border border-border"
-                  title="Recetas en PDF"
-                  allowFullScreen
-                />
-              </object>
+                title="Recetas en PDF"
+                allowFullScreen
+              />
             </div>
           </div>
         ) : isBonusFolder ? (
