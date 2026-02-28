@@ -86,40 +86,56 @@ const thumbnailMap: Record<string, string> = {
   "intro-agridulce": thumbIntroAgridulce,
 };
 
+const SUPABASE_STORAGE_BASE = "https://gzunvwllnrykwaqtiqhj.supabase.co/storage/v1/object/public/course-files";
+
 const pdfResources: Record<string, { file: string; name: string }> = {
-  "pdf-1": { file: "/PALOMITAS_REDONDITAS.pdf", name: "PALOMITAS_REDONDITAS.pdf" },
-  "bonus-publicaciones": { file: "/publicaciones.pdf", name: "publicaciones.pdf" },
-  "bonus-leyendas": { file: "/leyendas.pdf", name: "leyendas.pdf" },
+  "pdf-1": { file: "PALOMITAS_REDONDITAS.pdf", name: "PALOMITAS_REDONDITAS.pdf" },
+  "bonus-publicaciones": { file: "publicaciones.pdf", name: "publicaciones.pdf" },
+  "bonus-leyendas": { file: "leyendas.pdf", name: "leyendas.pdf" },
 };
+
+const AUDIO_URL = `${SUPABASE_STORAGE_BASE}/audio-intro.mp3`;
 
 const getPdfResource = (lessonId: string) => pdfResources[lessonId] || pdfResources["pdf-1"];
 
-const getPdfAccessUrl = (pdfPath: string) => {
-  const query = window.location.search;
-  return query ? `${pdfPath}${query}` : pdfPath;
-};
+const getFileUrl = (fileName: string) => `${SUPABASE_STORAGE_BASE}/${fileName}`;
 
-const openPdfInNewTab = (pdfUrl: string) => {
-  window.open(getPdfAccessUrl(pdfUrl), "_blank", "noopener,noreferrer");
-};
-
-const handlePdfDownload = async (pdfUrl: string, fileName: string) => {
+// Fallback: try Supabase first, then local
+const getFileUrlWithFallback = async (fileName: string): Promise<string> => {
+  const supaUrl = getFileUrl(fileName);
   try {
-    const response = await fetch(getPdfAccessUrl(pdfUrl), { cache: "no-store" });
+    const res = await fetch(supaUrl, { method: "HEAD" });
+    if (res.ok) return supaUrl;
+  } catch { /* ignore */ }
+  return `/${fileName}`;
+};
+
+const openPdfInNewTab = (fileName: string) => {
+  window.open(getFileUrl(fileName), "_blank", "noopener,noreferrer");
+};
+
+const handlePdfDownload = async (fileName: string, downloadName: string) => {
+  try {
+    // Try Supabase Storage first
+    let response = await fetch(getFileUrl(fileName), { cache: "no-store" });
+    if (!response.ok) {
+      // Fallback to local
+      response = await fetch(`/${fileName}`, { cache: "no-store" });
+    }
     if (!response.ok) throw new Error("PDF unavailable");
 
     const blob = await response.blob();
     const blobUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = blobUrl;
-    link.download = fileName;
+    link.download = downloadName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
     setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
   } catch {
-    openPdfInNewTab(pdfUrl);
+    openPdfInNewTab(fileName);
   }
 };
 
@@ -252,7 +268,7 @@ const AudioPlayer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void 
           <Volume2 className="w-10 h-10 text-primary" />
         </div>
         <p className="text-sm text-muted-foreground text-center">{lesson.description}</p>
-        <audio controls autoPlay className="w-full" src="/audio-intro.mp3">
+        <audio controls autoPlay className="w-full" src={AUDIO_URL}>
           Tu navegador no soporta audio.
         </audio>
       </div>
@@ -263,8 +279,8 @@ const AudioPlayer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void 
 // --- PDF Viewer Modal ---
 const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void }) => {
   const pdf = getPdfResource(lesson.id);
-  const pdfUrl = pdf.file;
-  const pdfAccessUrl = getPdfAccessUrl(pdfUrl);
+  const pdfFileName = pdf.file;
+  const pdfViewUrl = getFileUrl(pdfFileName);
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   return (
@@ -304,14 +320,14 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
           </div>
           <div className="flex flex-col gap-3 w-full max-w-xs">
             <button
-              onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
+              onClick={() => handlePdfDownload(pdfFileName, pdf.name)}
               className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-primary text-primary-foreground text-lg font-medium hover:bg-primary/90 transition-colors"
             >
               <Download className="w-6 h-6" />
               Descargar PDF
             </button>
             <a
-              href={pdfAccessUrl}
+              href={pdfViewUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors"
@@ -326,14 +342,14 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
         <div className="flex-1 w-full flex flex-col">
           <div className="flex items-center justify-end gap-2 px-4 py-2 shrink-0">
             <button
-              onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
+              onClick={() => handlePdfDownload(pdfFileName, pdf.name)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
             >
               <Download className="w-4 h-4" />
               Descargar
             </button>
             <a
-              href={pdfAccessUrl}
+              href={pdfViewUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
@@ -344,22 +360,22 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
           </div>
           <div className="flex-1">
             <object
-              data={pdfAccessUrl}
+              data={pdfViewUrl}
               type="application/pdf"
               className="w-full h-full"
               aria-label={lesson.title}
             >
-              <iframe src={pdfAccessUrl} className="w-full h-full border-0" title={lesson.title} allowFullScreen />
+              <iframe src={pdfViewUrl} className="w-full h-full border-0" title={lesson.title} allowFullScreen />
             </object>
           </div>
           <p className="text-xs text-muted-foreground py-2 text-center">
             ¿No se ve el PDF?{" "}
-            <a href={pdfAccessUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+            <a href={pdfViewUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
               Ábrelo aquí
             </a>{" "}
             o{" "}
             <button
-              onClick={() => handlePdfDownload(pdfUrl, pdf.name)}
+              onClick={() => handlePdfDownload(pdfFileName, pdf.name)}
               className="text-primary underline"
             >
               descárgalo
@@ -503,14 +519,14 @@ const FolderView = ({
             {/* Mobile: big action buttons */}
             <div className="flex flex-col items-center gap-4 mb-4 sm:hidden">
               <button
-                onClick={() => handlePdfDownload("/PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
+                onClick={() => handlePdfDownload("PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
                 className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-primary text-primary-foreground text-lg font-medium hover:bg-primary/90 transition-colors w-full max-w-xs"
               >
                 <Download className="w-6 h-6" />
                 Descargar PDF
               </button>
               <a
-                href={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
+                href={getFileUrl("PALOMITAS_REDONDITAS.pdf")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors w-full max-w-xs"
@@ -523,14 +539,14 @@ const FolderView = ({
             <div className="hidden sm:block">
               <div className="flex items-center justify-end gap-2 mb-3">
                 <button
-                  onClick={() => handlePdfDownload("/PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
+                  onClick={() => handlePdfDownload("PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
                   className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
                 >
                   <Download className="w-4 h-4" />
                   <span>Descargar</span>
                 </button>
                 <a
-                  href={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
+                  href={getFileUrl("PALOMITAS_REDONDITAS.pdf")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
@@ -540,13 +556,13 @@ const FolderView = ({
                 </a>
               </div>
               <object
-                data={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
+                data={getFileUrl("PALOMITAS_REDONDITAS.pdf")}
                 type="application/pdf"
                 className="w-full h-[70vh] rounded-lg border border-border"
                 aria-label="Recetas en PDF"
               >
                 <iframe
-                  src={getPdfAccessUrl("/PALOMITAS_REDONDITAS.pdf")}
+                  src={getFileUrl("PALOMITAS_REDONDITAS.pdf")}
                   className="w-full h-[70vh] rounded-lg border border-border"
                   title="Recetas en PDF"
                   allowFullScreen
@@ -592,7 +608,7 @@ const FolderView = ({
                     <p className="text-sm text-muted-foreground mt-1">{lesson.description}</p>
                   </div>
                 </div>
-                <audio controls className="w-full" src="/audio-intro.mp3">
+                <audio controls className="w-full" src={AUDIO_URL}>
                   Tu navegador no soporta audio.
                 </audio>
               </div>
