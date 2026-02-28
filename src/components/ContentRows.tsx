@@ -55,6 +55,7 @@ const folderCovers: Record<string, string> = {
   calculadora: coverCalculadora,
   "receitas-agridulces": coverAgridulces,
   "bonus-instagram": coverBonusInstagram,
+  "bonus-recetas-alternativas": coverPdfReal,
   "instagram-ai": coverInstagramAI,
   orcamentos: coverOrcamentos,
   soporte: coverSoporte,
@@ -100,6 +101,7 @@ const DRIVE_FILE_IDS: Record<string, string> = {
   "PALOMITAS_REDONDITAS.pdf": "1N4D9Ff0KhVyjJZkNkxJGuJGVTGAHfsWr",
   "publicaciones.pdf": "1V7NyK8AnSscvZ-mocxpcM6OooxUdXZMP",
   "leyendas.pdf": "1JRv330ldOVDMjWv4uxz8-NwK-rz80AkD",
+  "recetas-alternativas.pdf": "1QT4WUW209qTCfS8nTa4AJQPY0goy56_O",
 };
 
 const SUPABASE_STORAGE_BASE = "https://gzunvwllnrykwaqtiqhj.supabase.co/storage/v1/object/public/course-files";
@@ -108,6 +110,7 @@ const pdfResources: Record<string, { file: string; name: string }> = {
   "pdf-1": { file: "PALOMITAS_REDONDITAS.pdf", name: "PALOMITAS_REDONDITAS.pdf" },
   "bonus-publicaciones": { file: "publicaciones.pdf", name: "publicaciones.pdf" },
   "bonus-leyendas": { file: "leyendas.pdf", name: "leyendas.pdf" },
+  "bonus-recetas-alt-pdf": { file: "recetas-alternativas.pdf", name: "recetas-alternativas.pdf" },
 };
 
 const AUDIO_URL = "/audio-intro.mp3";
@@ -664,7 +667,7 @@ const ContentRows = () => {
     );
   }
 
-  const bonusIds = ["bonus-instagram", "calculadora", "instagram-ai", "orcamentos", "soporte"];
+  const bonusIds = ["bonus-instagram", "bonus-recetas-alternativas", "calculadora", "instagram-ai", "orcamentos", "soporte"];
   const mainFolders = courseFolders.filter((f) => !bonusIds.includes(f.id));
   const bonusFolders = courseFolders.filter((f) => bonusIds.includes(f.id));
 
