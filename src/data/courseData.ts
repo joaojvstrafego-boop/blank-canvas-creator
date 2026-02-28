@@ -9,6 +9,7 @@ export interface Lesson {
   completed?: boolean;
   thumbnail?: string;
   videoUrl?: string;
+  externalUrl?: string;
 }
 
 export interface CourseFolder {
@@ -359,12 +360,14 @@ export const courseFolders: CourseFolder[] = [
         title: "32 Publicaciones Editables",
         description: "Plantillas de posts profesionales para tu negocio de palomitas",
         type: "pdf",
+        externalUrl: "https://www.canva.com/design/DAHCPTbGaIs/fKQP77OUC2QHEQ0aEC76ug/view?utm_content=DAHCPTbGaIs&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview",
       },
       {
         id: "bonus-leyendas",
         title: "Leyendas para tus Publicaciones",
         description: "Textos listos para copiar y pegar en tus posts de Instagram",
         type: "pdf",
+        externalUrl: "https://www.canva.com/design/DAHCPfoLPbg/2bt41U5Bbkpq2-S6vKP3bQ/view?utm_content=DAHCPfoLPbg&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview",
       },
     ],
   },

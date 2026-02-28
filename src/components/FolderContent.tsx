@@ -17,10 +17,17 @@ const LessonCard = ({ lesson, index }: { lesson: Lesson; index: number }) => {
     }
   };
 
+  const handleClick = () => {
+    if (lesson.externalUrl) {
+      window.open(lesson.externalUrl, "_blank");
+    }
+  };
+
   return (
     <div
       className="group flex items-start gap-4 p-5 rounded-xl bg-card border border-border hover:border-primary/30 hover:shadow-md transition-all duration-300 cursor-pointer"
       style={{ animationDelay: `${index * 100}ms` }}
+      onClick={handleClick}
     >
       {/* Icon */}
       <div className="w-11 h-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
