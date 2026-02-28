@@ -87,7 +87,9 @@ const thumbnailMap: Record<string, string> = {
 };
 
 const DRIVE_FILE_IDS: Record<string, string> = {
-  "PALOMITAS_REDONDITAS.pdf": "1vKyCuLzGOl6XxBbVBuZGhV0WJ0n9jcxS",
+  "PALOMITAS_REDONDITAS.pdf": "1N4D9Ff0KhVyjJZkNkxJGuJGVTGAHfsWr",
+  "publicaciones.pdf": "1V7NyK8AnSscvZ-mocxpcM6OooxUdXZMP",
+  "leyendas.pdf": "1JRv330ldOVDMjWv4uxz8-NwK-rz80AkD",
 };
 
 const SUPABASE_STORAGE_BASE = "https://gzunvwllnrykwaqtiqhj.supabase.co/storage/v1/object/public/course-files";
@@ -346,11 +348,11 @@ const ScrollRow = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="relative">
       {/* Swipe hint for mobile */}
-      <div className="flex items-center gap-2 px-4 md:px-12 mb-2 md:hidden">
-        <div className="flex items-center gap-1 text-xs text-muted-foreground animate-pulse">
-          <ChevronLeft className="w-3 h-3" />
-          <span>Desliza para ver más</span>
-          <ChevronRight className="w-3 h-3" />
+      <div className="flex items-center gap-2 px-4 md:px-12 mb-3 md:hidden">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground animate-pulse">
+          <ChevronLeft className="w-4 h-4" />
+          <span className="font-medium">Desliza para ver más</span>
+          <ChevronRight className="w-4 h-4" />
         </div>
       </div>
 
