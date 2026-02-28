@@ -40,6 +40,70 @@ export const courseFolders: CourseFolder[] = [
     ],
   },
   {
+    id: "utensilios",
+    title: "Utensilios necesarios",
+    description: "Conoce los utensilios que necesitas para preparar palomitas gourmet",
+    icon: Video,
+    color: "primary",
+    lessons: [
+      {
+        id: "utensilios-video",
+        title: "Utensilios necesarios",
+        description: "Todo lo que necesitas para comenzar",
+        type: "video",
+        videoUrl: "https://drive.google.com/file/d/1Q9gdY1ZIh7MWnippgnaHOzrT87CT4hOQ/preview",
+      },
+    ],
+  },
+  {
+    id: "tipos-maiz",
+    title: "Tipos de maíz",
+    description: "Aprende sobre los diferentes tipos de maíz para palomitas",
+    icon: Video,
+    color: "primary",
+    lessons: [
+      {
+        id: "tipos-maiz-video",
+        title: "Tipos de maíz",
+        description: "Conoce las variedades de maíz ideales",
+        type: "video",
+        videoUrl: "https://drive.google.com/file/d/1l59-3H6Zz9wdWaUUoNcBf1fVPqp4zgIJ/preview",
+      },
+    ],
+  },
+  {
+    id: "tipos-chocolate",
+    title: "Tipos de chocolate",
+    description: "Descubre los mejores chocolates para tus palomitas",
+    icon: Video,
+    color: "primary",
+    lessons: [
+      {
+        id: "tipos-chocolate-video",
+        title: "Tipos de chocolate",
+        description: "Guía completa de chocolates para palomitas",
+        type: "video",
+        videoUrl: "https://drive.google.com/file/d/1K75nR7SsIlBkPtweFpOeuPO10gmtGrC9/preview",
+      },
+    ],
+  },
+  {
+    id: "conservar-palomitas",
+    title: "Cómo conservar las palomitas",
+    description: "Aprende a conservar tus palomitas correctamente",
+    icon: Video,
+    color: "primary",
+    lessons: [
+      {
+        id: "conservar-video",
+        title: "Cómo conservar las palomitas",
+        description: "Tips para mantener tus palomitas frescas",
+        type: "video",
+        videoUrl: "https://drive.google.com/file/d/1xpJz1frFs_fcvhclTHbXBL9fAwZyG1Ur/preview",
+      },
+    ],
+  },
+  {
     id: "receitas-pdf",
     title: "Recetas en PDF",
     description: "Descarga las recetas completas en formato PDF",
