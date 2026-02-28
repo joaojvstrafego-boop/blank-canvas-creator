@@ -113,34 +113,9 @@ const getFileUrlWithFallback = async (fileName: string): Promise<string> => {
   return `/${fileName}`;
 };
 
-const openPdfInNewTab = (fileName: string) => {
-  window.open(getGoogleViewerUrl(fileName), "_blank", "noopener,noreferrer");
-};
 
-const handlePdfDownload = async (fileName: string, downloadName: string) => {
-  try {
-    // Try Supabase Storage first
-    let response = await fetch(getFileUrl(fileName), { cache: "no-store" });
-    if (!response.ok) {
-      // Fallback to local
-      response = await fetch(`/${fileName}`, { cache: "no-store" });
-    }
-    if (!response.ok) throw new Error("PDF unavailable");
-
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    link.download = downloadName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-  } catch {
-    openPdfInNewTab(fileName);
-  }
-};
+// Direct link download - no fetch (avoids iframe/CORS interception)
+const getDownloadUrl = (fileName: string) => `${SUPABASE_STORAGE_BASE}/${fileName}?download=`;
 
 // --- Folder Card (poster style) ---
 const FolderCard = ({ folder, onClick }: { folder: CourseFolder; onClick: () => void }) => {
@@ -321,13 +296,15 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
             <p className="text-sm text-muted-foreground">{lesson.description}</p>
           </div>
           <div className="flex flex-col gap-3 w-full max-w-xs">
-            <button
-              onClick={() => handlePdfDownload(pdfFileName, pdf.name)}
+            <a
+              href={getDownloadUrl(pdfFileName)}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-primary text-primary-foreground text-lg font-medium hover:bg-primary/90 transition-colors"
             >
               <Download className="w-6 h-6" />
               Descargar PDF
-            </button>
+            </a>
             <a
               href={getGoogleViewerUrl(pdfFileName)}
               target="_blank"
@@ -349,13 +326,15 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
             La vista previa puede fallar en Chrome/PWA. Usa los botones para abrir o descargar el PDF.
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-3">
-            <button
-              onClick={() => handlePdfDownload(pdfFileName, pdf.name)}
+            <a
+              href={getDownloadUrl(pdfFileName)}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
             >
               <Download className="w-4 h-4" />
               Descargar
-            </button>
+            </a>
             <a
               href={getGoogleViewerUrl(pdfFileName)}
               target="_blank"
@@ -502,13 +481,15 @@ const FolderView = ({
           <div className="w-full max-w-5xl mx-auto">
             {/* Mobile: big action buttons */}
             <div className="flex flex-col items-center gap-4 mb-4 sm:hidden">
-              <button
-                onClick={() => handlePdfDownload("PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
+              <a
+                href={getDownloadUrl("PALOMITAS_REDONDITAS.pdf")}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-primary text-primary-foreground text-lg font-medium hover:bg-primary/90 transition-colors w-full max-w-xs"
               >
                 <Download className="w-6 h-6" />
                 Descargar PDF
-              </button>
+              </a>
               <a
                 href={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
                 target="_blank"
@@ -529,13 +510,15 @@ const FolderView = ({
                   La vista previa puede fallar en Chrome/PWA. Usa los botones para abrir o descargar el PDF.
                 </p>
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <button
-                    onClick={() => handlePdfDownload("PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
+                  <a
+                    href={getDownloadUrl("PALOMITAS_REDONDITAS.pdf")}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
                   >
                     <Download className="w-4 h-4" />
                     <span>Descargar</span>
-                  </button>
+                  </a>
                   <a
                     href={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
                     target="_blank"
