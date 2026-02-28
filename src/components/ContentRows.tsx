@@ -100,7 +100,7 @@ const pdfResources: Record<string, { file: string; name: string }> = {
   "bonus-leyendas": { file: "leyendas.pdf", name: "leyendas.pdf" },
 };
 
-const AUDIO_URL = `${SUPABASE_STORAGE_BASE}/audio-intro.mp3`;
+const AUDIO_URL = "/audio-intro.mp3";
 
 const getPdfResource = (lessonId: string) => pdfResources[lessonId] || pdfResources["pdf-1"];
 
