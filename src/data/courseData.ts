@@ -121,7 +121,7 @@ export const courseFolders: CourseFolder[] = [
   },
   {
     id: "receitas-video",
-    title: "Recetas Dulces en Video",
+    title: "Palomitas Dulces con Caramelo Tradicional",
     description: "Sigue el paso a paso con Carmela",
     icon: Video,
     color: "primary",
@@ -278,7 +278,7 @@ export const courseFolders: CourseFolder[] = [
   },
   {
     id: "receitas-agridulces",
-    title: "Recetas Agridulces en Video",
+    title: "Palomitas Agridulces (Saladas)",
     description: "Aprende a preparar palomitas agridulces paso a paso",
     icon: Video,
     color: "primary",
