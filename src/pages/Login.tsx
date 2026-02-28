@@ -207,50 +207,86 @@ const Login = () => {
       {/* Install Instructions */}
       <div className="w-full max-w-sm space-y-4">
         <h3 className="font-display text-xl text-center text-foreground">
-          📲 CÓMO INSTALAR ESTA APP
+          📲 INSTALA LA APP EN TU CELULAR
         </h3>
+        <p className="text-center text-sm text-muted-foreground">
+          ¡Es muy fácil! Sigue estos pasos simples 👇
+        </p>
 
         {/* iPhone */}
-        <div className="bg-card rounded-xl p-4 border border-border">
-          <h4 className="font-display text-lg text-primary mb-2 flex items-center gap-2">
-            🍎 iPhone / iPad (Safari)
+        <div className="bg-card rounded-xl p-5 border-2 border-primary/30 space-y-4">
+          <h4 className="font-display text-lg text-primary text-center flex items-center justify-center gap-2">
+            🍎 Si tienes iPhone o iPad
           </h4>
-          <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
-            <li>Abre esta página en <span className="text-foreground font-medium">Safari</span></li>
-            <li className="flex items-start gap-1">
-              <span>2.</span>
-              <span>Toca el botón <Share className="w-4 h-4 inline text-foreground" /> <span className="text-foreground font-medium">Compartir</span> (abajo de la pantalla)</span>
-            </li>
-            <li className="flex items-start gap-1">
-              <span>3.</span>
-              <span>Busca y toca <PlusSquare className="w-4 h-4 inline text-foreground" /> <span className="text-foreground font-medium">"Agregar a pantalla de inicio"</span></span>
-            </li>
-            <li>Toca <span className="text-foreground font-medium">"Agregar"</span> y ¡listo!</li>
-          </ol>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
+              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">1</span>
+              <p className="text-sm text-foreground">
+                Abre esta página usando <span className="font-bold text-primary">Safari</span> (el navegador azul con la brújula que viene en tu iPhone)
+              </p>
+            </div>
+            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
+              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">2</span>
+              <p className="text-sm text-foreground">
+                Toca este botón <Share className="w-5 h-5 inline text-primary" /> que está <span className="font-bold">abajo de tu pantalla</span> (es un cuadradito con una flecha hacia arriba)
+              </p>
+            </div>
+            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
+              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">3</span>
+              <p className="text-sm text-foreground">
+                Desliza hacia abajo y toca <PlusSquare className="w-5 h-5 inline text-primary" /> <span className="font-bold">"Agregar a pantalla de inicio"</span>
+              </p>
+            </div>
+            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
+              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">4</span>
+              <p className="text-sm text-foreground">
+                Toca <span className="font-bold">"Agregar"</span> arriba a la derecha y <span className="font-bold text-primary">¡ya está! 🎉</span>
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Android */}
-        <div className="bg-card rounded-xl p-4 border border-border">
-          <h4 className="font-display text-lg text-primary mb-2 flex items-center gap-2">
-            🤖 Android (Chrome)
+        <div className="bg-card rounded-xl p-5 border-2 border-primary/30 space-y-4">
+          <h4 className="font-display text-lg text-primary text-center flex items-center justify-center gap-2">
+            🤖 Si tienes Android
           </h4>
-          <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
-            <li>Abre esta página en <span className="text-foreground font-medium">Chrome</span></li>
-            <li className="flex items-start gap-1">
-              <span>2.</span>
-              <span>Toca los <MoreVertical className="w-4 h-4 inline text-foreground" /> <span className="text-foreground font-medium">3 puntos</span> (arriba a la derecha)</span>
-            </li>
-            <li className="flex items-start gap-1">
-              <span>3.</span>
-              <span>Toca <Download className="w-4 h-4 inline text-foreground" /> <span className="text-foreground font-medium">"Instalar app"</span> o <span className="text-foreground font-medium">"Agregar a pantalla de inicio"</span></span>
-            </li>
-            <li>Confirma y ¡listo!</li>
-          </ol>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
+              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">1</span>
+              <p className="text-sm text-foreground">
+                Abre esta página usando <span className="font-bold text-primary">Chrome</span> (el navegador con el círculo de colores)
+              </p>
+            </div>
+            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
+              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">2</span>
+              <p className="text-sm text-foreground">
+                Toca los <MoreVertical className="w-5 h-5 inline text-primary" /> <span className="font-bold">3 puntitos</span> que están <span className="font-bold">arriba a la derecha</span> de tu pantalla
+              </p>
+            </div>
+            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
+              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">3</span>
+              <p className="text-sm text-foreground">
+                Busca y toca <Download className="w-5 h-5 inline text-primary" /> <span className="font-bold">"Instalar app"</span> o <span className="font-bold">"Agregar a pantalla de inicio"</span>
+              </p>
+            </div>
+            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
+              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">4</span>
+              <p className="text-sm text-foreground">
+                Toca <span className="font-bold">"Instalar"</span> y <span className="font-bold text-primary">¡ya está! 🎉</span>
+              </p>
+            </div>
+          </div>
         </div>
 
-        <p className="text-muted-foreground text-xs text-center pb-8">
-          Así podrás abrir la app como si fuera una app de verdad 🎉
-        </p>
+        <div className="bg-accent/10 rounded-xl p-4 text-center space-y-1">
+          <p className="text-foreground text-sm font-semibold">
+            ✨ ¡Después la app aparecerá en tu celular como cualquier otra app!
+          </p>
+          <p className="text-muted-foreground text-xs">
+            La puedes abrir directamente desde tu pantalla de inicio, sin necesidad de buscarla en el navegador.
+          </p>
+        </div>
       </div>
     </div>
   );
