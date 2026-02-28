@@ -86,6 +86,10 @@ const thumbnailMap: Record<string, string> = {
   "intro-agridulce": thumbIntroAgridulce,
 };
 
+const DRIVE_FILE_IDS: Record<string, string> = {
+  "PALOMITAS_REDONDITAS.pdf": "1vKyCuLzGOl6XxBbVBuZGhV0WJ0n9jcxS",
+};
+
 const SUPABASE_STORAGE_BASE = "https://gzunvwllnrykwaqtiqhj.supabase.co/storage/v1/object/public/course-files";
 
 const pdfResources: Record<string, { file: string; name: string }> = {
@@ -98,24 +102,28 @@ const AUDIO_URL = `${SUPABASE_STORAGE_BASE}/audio-intro.mp3`;
 
 const getPdfResource = (lessonId: string) => pdfResources[lessonId] || pdfResources["pdf-1"];
 
-const getFileUrl = (fileName: string) => `${SUPABASE_STORAGE_BASE}/${fileName}`;
+// Use Google Drive when available, otherwise Supabase Storage
+const getDrivePreviewUrl = (fileId: string) => `https://drive.google.com/file/d/${fileId}/preview`;
+const getDriveDownloadUrl = (fileId: string) => `https://drive.google.com/uc?export=download&id=${fileId}`;
+const getDriveViewUrl = (fileId: string) => `https://drive.google.com/file/d/${fileId}/view`;
 
-const getGoogleViewerUrl = (fileName: string) =>
-  `https://docs.google.com/gview?url=${encodeURIComponent(getFileUrl(fileName))}&embedded=true`;
-
-// Fallback: try Supabase first, then local
-const getFileUrlWithFallback = async (fileName: string): Promise<string> => {
-  const supaUrl = getFileUrl(fileName);
-  try {
-    const res = await fetch(supaUrl, { method: "HEAD" });
-    if (res.ok) return supaUrl;
-  } catch { /* ignore */ }
-  return `/${fileName}`;
+const getViewUrl = (fileName: string) => {
+  const driveId = DRIVE_FILE_IDS[fileName];
+  if (driveId) return getDrivePreviewUrl(driveId);
+  return `${SUPABASE_STORAGE_BASE}/${fileName}`;
 };
 
+const getDownloadUrl = (fileName: string) => {
+  const driveId = DRIVE_FILE_IDS[fileName];
+  if (driveId) return getDriveDownloadUrl(driveId);
+  return `${SUPABASE_STORAGE_BASE}/${fileName}?download=`;
+};
 
-// Direct link download - no fetch (avoids iframe/CORS interception)
-const getDownloadUrl = (fileName: string) => `${SUPABASE_STORAGE_BASE}/${fileName}?download=`;
+const getOpenUrl = (fileName: string) => {
+  const driveId = DRIVE_FILE_IDS[fileName];
+  if (driveId) return getDriveViewUrl(driveId);
+  return `${SUPABASE_STORAGE_BASE}/${fileName}`;
+};
 
 // --- Folder Card (poster style) ---
 const FolderCard = ({ folder, onClick }: { folder: CourseFolder; onClick: () => void }) => {
@@ -306,7 +314,7 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
               Descargar PDF
             </a>
             <a
-              href={getGoogleViewerUrl(pdfFileName)}
+              href={getOpenUrl(pdfFileName)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors"
@@ -336,7 +344,7 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
               Descargar
             </a>
             <a
-              href={getGoogleViewerUrl(pdfFileName)}
+              href={getOpenUrl(pdfFileName)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
@@ -491,7 +499,7 @@ const FolderView = ({
                 Descargar PDF
               </a>
               <a
-                href={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
+                href={getOpenUrl("PALOMITAS_REDONDITAS.pdf")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors w-full max-w-xs"
@@ -520,7 +528,7 @@ const FolderView = ({
                     <span>Descargar</span>
                   </a>
                   <a
-                    href={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
+                    href={getOpenUrl("PALOMITAS_REDONDITAS.pdf")}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
