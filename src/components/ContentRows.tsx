@@ -407,6 +407,7 @@ const FolderView = ({
   const isSoporte = folder.id === "soporte";
   const isInstagramAI = folder.id === "instagram-ai";
   const isOrcamentos = folder.id === "orcamentos";
+  const isEmbedFolder = ["utensilios", "tipos-maiz", "tipos-chocolate", "conservar-palomitas"].includes(folder.id);
   return (
     <div className="animate-fade-in pb-16">
       {/* Hero banner for folder */}
@@ -527,6 +528,44 @@ const FolderView = ({
                 </audio>
               </div>
             ))}
+          </div>
+        ) : isEmbedFolder ? (
+          <div className="w-full max-w-5xl mx-auto">
+            {folder.lessons.map((lesson) => {
+              const driveId = lesson.videoUrl?.match(/\/d\/([^/]+)/)?.[1];
+              if (!driveId) return null;
+              return (
+                <div key={lesson.id}>
+                  <div className="flex items-center justify-center gap-3 flex-wrap mb-4">
+                    <a
+                      href={getDriveDownloadUrl(driveId)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+                    >
+                      <Download className="w-5 h-5" />
+                      Descargar
+                    </a>
+                    <a
+                      href={getDriveViewUrl(driveId)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-muted text-foreground font-medium hover:bg-muted/80 transition-colors"
+                    >
+                      <ExternalLink className="w-5 h-5" />
+                      Abrir en navegador
+                    </a>
+                  </div>
+                  <iframe
+                    src={getDrivePreviewUrl(driveId)}
+                    className="w-full h-[70vh] rounded-lg border border-border"
+                    title={lesson.title}
+                    allow="autoplay"
+                    allowFullScreen
+                  />
+                </div>
+              );
+            })}
           </div>
         ) : (
           /* Normal lessons grid */
