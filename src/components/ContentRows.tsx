@@ -16,6 +16,7 @@ import coverTiposMaiz from "@/assets/cover-tipos-maiz.jpg";
 import coverTiposChocolate from "@/assets/cover-tipos-chocolate.jpg";
 import coverConservar from "@/assets/cover-conservar.jpg";
 import coverCarameloAterciopelado from "@/assets/cover-caramelo-aterciopelado.jpg";
+import coverRecetasAlternativas from "@/assets/cover-recetas-alternativas.jpg";
 
 const SupportChat = lazy(() => import("@/components/SupportChat"));
 const InstagramGenerator = lazy(() => import("@/components/InstagramGenerator"));
@@ -55,7 +56,7 @@ const folderCovers: Record<string, string> = {
   calculadora: coverCalculadora,
   "receitas-agridulces": coverAgridulces,
   "bonus-instagram": coverBonusInstagram,
-  "bonus-recetas-alternativas": coverPdfReal,
+  "bonus-recetas-alternativas": coverRecetasAlternativas,
   "instagram-ai": coverInstagramAI,
   orcamentos: coverOrcamentos,
   soporte: coverSoporte,
