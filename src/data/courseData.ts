@@ -349,7 +349,7 @@ export const courseFolders: CourseFolder[] = [
   },
   {
     id: "bonus-instagram",
-    title: "Bonus 1 - 32 Posts Editables para Instagram",
+    title: "32 Posts Editables para Instagram",
     description: "Descarga plantillas editables para promocionar tu negocio de palomitas",
     icon: FileText,
     color: "accent",
@@ -370,7 +370,7 @@ export const courseFolders: CourseFolder[] = [
   },
   {
     id: "bonus-recetas-alternativas",
-    title: "Bonus 2 - Recetas Alternativas",
+    title: "Recetas Alternativas",
     description: "Recetas alternativas en PDF para expandir tu menú de palomitas",
     icon: FileText,
     color: "accent",
