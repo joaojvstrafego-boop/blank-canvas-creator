@@ -32,7 +32,7 @@
   <body>
     <script>
       // One-time cache purge to fix stale/black images (v2)
-      var CACHE_VERSION = 'v5';
+      var CACHE_VERSION = 'v6';
       if (localStorage.getItem('cache-purged') !== CACHE_VERSION) {
         if ('caches' in window) {
           caches.keys().then(function(names) {
