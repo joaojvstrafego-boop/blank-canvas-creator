@@ -283,7 +283,6 @@ const AudioPlayer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void 
 const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void }) => {
   const pdf = getPdfResource(lesson.id);
   const pdfFileName = pdf.file;
-  const pdfViewUrl = getFileUrl(pdfFileName);
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   return (
@@ -341,12 +340,18 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
           </div>
         </div>
       ) : (
-        /* Desktop: render PDF inline with fallback */
-        <div className="flex-1 w-full flex flex-col">
-          <div className="flex items-center justify-end gap-2 px-4 py-2 shrink-0">
+        /* Desktop: avoid inline PDF renderer (Chrome/PWA incompatibility) */
+        <div className="flex-1 w-full flex flex-col items-center justify-center px-6 py-8 gap-4">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <FileText className="w-8 h-8 text-primary" />
+          </div>
+          <p className="text-sm text-muted-foreground text-center max-w-md">
+            La vista previa puede fallar en Chrome/PWA. Usa los botones para abrir o descargar el PDF.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-3">
             <button
               onClick={() => handlePdfDownload(pdfFileName, pdf.name)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
             >
               <Download className="w-4 h-4" />
               Descargar
@@ -355,34 +360,12 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
               href={getGoogleViewerUrl(pdfFileName)}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
               Abrir
             </a>
           </div>
-          <div className="flex-1">
-            <iframe
-              src={getGoogleViewerUrl(pdfFileName)}
-              className="w-full h-full border-0"
-              title={lesson.title}
-              allowFullScreen
-            />
-          </div>
-          <p className="text-xs text-muted-foreground py-2 text-center">
-            ¿No se ve el PDF?{" "}
-            <a href={getGoogleViewerUrl(pdfFileName)} target="_blank" rel="noopener noreferrer" className="text-primary underline">
-              Ábrelo aquí
-            </a>{" "}
-            o{" "}
-            <button
-              onClick={() => handlePdfDownload(pdfFileName, pdf.name)}
-              className="text-primary underline"
-            >
-              descárgalo
-            </button>
-            .
-          </p>
         </div>
       )}
     </div>
@@ -538,30 +521,32 @@ const FolderView = ({
             </div>
             {/* Desktop: inline viewer */}
             <div className="hidden sm:block">
-              <div className="flex items-center justify-end gap-2 mb-3">
-                <button
-                  onClick={() => handlePdfDownload("PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Descargar</span>
-                </button>
-                <a
-                  href={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
-                >
-                  <ExternalLink className="w-4 h-4" />
-                  <span>Abrir</span>
-                </a>
+              <div className="flex flex-col items-center justify-center gap-4 py-8 rounded-lg border border-border bg-card/50">
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <FileText className="w-8 h-8 text-primary" />
+                </div>
+                <p className="text-sm text-muted-foreground text-center max-w-md px-4">
+                  La vista previa puede fallar en Chrome/PWA. Usa los botones para abrir o descargar el PDF.
+                </p>
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <button
+                    onClick={() => handlePdfDownload("PALOMITAS_REDONDITAS.pdf", "PALOMITAS_REDONDITAS.pdf")}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Descargar</span>
+                  </button>
+                  <a
+                    href={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>Abrir</span>
+                  </a>
+                </div>
               </div>
-              <iframe
-                src={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
-                className="w-full h-[70vh] rounded-lg border border-border"
-                title="Recetas en PDF"
-                allowFullScreen
-              />
             </div>
           </div>
         ) : isBonusFolder ? (
