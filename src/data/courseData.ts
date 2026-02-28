@@ -23,8 +23,8 @@ export interface CourseFolder {
 export const courseFolders: CourseFolder[] = [
   {
     id: "utensilios",
-    title: "Utensilios necesarios",
-    description: "Conoce los utensilios que necesitas para preparar palomitas gourmet",
+    title: "Utensilios",
+    description: "Conoce los utensilios que necesitas",
     icon: Video,
     color: "primary",
     lessons: [
