@@ -114,7 +114,7 @@ const getFileUrlWithFallback = async (fileName: string): Promise<string> => {
 };
 
 const openPdfInNewTab = (fileName: string) => {
-  window.open(getFileUrl(fileName), "_blank", "noopener,noreferrer");
+  window.open(getGoogleViewerUrl(fileName), "_blank", "noopener,noreferrer");
 };
 
 const handlePdfDownload = async (fileName: string, downloadName: string) => {
@@ -330,7 +330,7 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
               Descargar PDF
             </button>
             <a
-              href={pdfViewUrl}
+              href={getGoogleViewerUrl(pdfFileName)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors"
@@ -352,7 +352,7 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
               Descargar
             </button>
             <a
-              href={pdfViewUrl}
+              href={getGoogleViewerUrl(pdfFileName)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
@@ -371,7 +371,7 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
           </div>
           <p className="text-xs text-muted-foreground py-2 text-center">
             ¿No se ve el PDF?{" "}
-            <a href={pdfViewUrl} target="_blank" rel="noopener noreferrer" className="text-primary underline">
+            <a href={getGoogleViewerUrl(pdfFileName)} target="_blank" rel="noopener noreferrer" className="text-primary underline">
               Ábrelo aquí
             </a>{" "}
             o{" "}
@@ -527,7 +527,7 @@ const FolderView = ({
                 Descargar PDF
               </button>
               <a
-                href={getFileUrl("PALOMITAS_REDONDITAS.pdf")}
+                href={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 px-6 py-4 rounded-xl bg-muted text-foreground text-lg font-medium hover:bg-muted/80 transition-colors w-full max-w-xs"
@@ -547,7 +547,7 @@ const FolderView = ({
                   <span>Descargar</span>
                 </button>
                 <a
-                  href={getFileUrl("PALOMITAS_REDONDITAS.pdf")}
+                  href={getGoogleViewerUrl("PALOMITAS_REDONDITAS.pdf")}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
