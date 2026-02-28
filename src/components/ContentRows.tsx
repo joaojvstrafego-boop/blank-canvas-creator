@@ -325,20 +325,14 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
           </div>
         </div>
       ) : (
-        /* Desktop: avoid inline PDF renderer (Chrome/PWA incompatibility) */
-        <div className="flex-1 w-full flex flex-col items-center justify-center px-6 py-8 gap-4">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-            <FileText className="w-8 h-8 text-primary" />
-          </div>
-          <p className="text-sm text-muted-foreground text-center max-w-md">
-            La vista previa puede fallar en Chrome/PWA. Usa los botones para abrir o descargar el PDF.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center gap-3">
+        /* Desktop: embed Google Drive preview */
+        <div className="flex-1 w-full flex flex-col">
+          <div className="flex items-center justify-end gap-2 px-4 py-2 shrink-0">
             <a
               href={getDownloadUrl(pdfFileName)}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
             >
               <Download className="w-4 h-4" />
               Descargar
@@ -347,11 +341,20 @@ const PdfViewer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void })
               href={getOpenUrl(pdfFileName)}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
             >
               <ExternalLink className="w-4 h-4" />
               Abrir
             </a>
+          </div>
+          <div className="flex-1">
+            <iframe
+              src={getViewUrl(pdfFileName)}
+              className="w-full h-full border-0 rounded-lg"
+              title={lesson.title}
+              allow="autoplay"
+              allowFullScreen
+            />
           </div>
         </div>
       )}
@@ -508,36 +511,35 @@ const FolderView = ({
                 Abrir en navegador
               </a>
             </div>
-            {/* Desktop: inline viewer */}
+            {/* Desktop: embed Google Drive preview */}
             <div className="hidden sm:block">
-              <div className="flex flex-col items-center justify-center gap-4 py-8 rounded-lg border border-border bg-card/50">
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                  <FileText className="w-8 h-8 text-primary" />
-                </div>
-                <p className="text-sm text-muted-foreground text-center max-w-md px-4">
-                  La vista previa puede fallar en Chrome/PWA. Usa los botones para abrir o descargar el PDF.
-                </p>
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <a
-                    href={getDownloadUrl("PALOMITAS_REDONDITAS.pdf")}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Descargar</span>
-                  </a>
-                  <a
-                    href={getOpenUrl("PALOMITAS_REDONDITAS.pdf")}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    <span>Abrir</span>
-                  </a>
-                </div>
+              <div className="flex items-center justify-end gap-2 mb-3">
+                <a
+                  href={getDownloadUrl("PALOMITAS_REDONDITAS.pdf")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Descargar</span>
+                </a>
+                <a
+                  href={getOpenUrl("PALOMITAS_REDONDITAS.pdf")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-foreground text-sm hover:bg-muted/80 transition-colors"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                  <span>Abrir</span>
+                </a>
               </div>
+              <iframe
+                src={getViewUrl("PALOMITAS_REDONDITAS.pdf")}
+                className="w-full h-[70vh] rounded-lg border border-border"
+                title="Recetas en PDF"
+                allow="autoplay"
+                allowFullScreen
+              />
             </div>
           </div>
         ) : isBonusFolder ? (
