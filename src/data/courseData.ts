@@ -22,24 +22,6 @@ export interface CourseFolder {
 
 export const courseFolders: CourseFolder[] = [
   {
-    id: "introducao",
-    title: "Empieza por aquí",
-    description: "Conoce el curso y a la profesora Carmela Vega",
-    icon: BookOpen,
-    color: "primary",
-    lessons: [
-      {
-        id: "intro-audio",
-        title: "Escucha este audio antes de comenzar",
-        description: "Mensaje especial de bienvenida de Carmela Vega",
-        duration: "2 min",
-        type: "audio",
-        completed: false,
-        thumbnail: "intro-welcome",
-      },
-    ],
-  },
-  {
     id: "utensilios",
     title: "Utensilios necesarios",
     description: "Conoce los utensilios que necesitas para preparar palomitas gourmet",
