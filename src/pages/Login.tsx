@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChefHat, Share, PlusSquare, Download, Loader2, ArrowLeft } from "lucide-react";
+import { ChefHat, Download, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -237,121 +237,34 @@ const Login = () => {
         </div>
       )}
 
-      {/* Install Section */}
+      {/* Install Button */}
       {!isInstalled && (
-        <div className="w-full max-w-sm space-y-4 mt-4">
-          <h3 className="font-display text-xl text-center text-foreground">
-            📲 INSTALA O APP
-          </h3>
-
-          {/* Android / Chrome — botão automático */}
-          {deferredPrompt && (
-            <Button
-              onClick={handleInstall}
-              className="w-full text-lg py-6 gap-2"
-              size="lg"
-            >
-              <Download className="w-5 h-5" />
-              Instalar App no meu celular
-            </Button>
-          )}
-
-          {/* Instruções visuais para todos */}
-          {!deferredPrompt && (
-            <div className="bg-card rounded-xl p-5 border-2 border-primary/30 space-y-5">
-              
-              {/* iPhone */}
-              <div className="space-y-3">
-                <p className="text-base font-bold text-foreground text-center">
-                  🍎 iPhone / iPad
-                </p>
-                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
-                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">1</span>
-                  <div>
-                    <p className="text-sm text-foreground font-semibold">
-                      Abra no <span className="font-bold">Safari</span>
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
-                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">2</span>
-                  <div>
-                    <p className="text-sm text-foreground font-semibold">
-                      Aperta esse botão 👇
-                    </p>
-                    <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
-                      <Share className="w-6 h-6 text-primary" />
-                      <span className="text-xs text-muted-foreground">
-                        (quadradinho com flechinha pra cima, lá embaixo da tela)
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
-                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">3</span>
-                  <div>
-                    <p className="text-sm text-foreground font-semibold">
-                      Aperta em:
-                    </p>
-                    <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
-                      <PlusSquare className="w-6 h-6 text-primary" />
-                      <span className="text-sm font-bold text-foreground">
-                        "Tela de Início"
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border-t border-border" />
-
-              {/* Android */}
-              <div className="space-y-3">
-                <p className="text-base font-bold text-foreground text-center">
-                  🤖 Android
-                </p>
-                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
-                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">1</span>
-                  <div>
-                    <p className="text-sm text-foreground font-semibold">
-                      Abra no <span className="font-bold">Chrome</span>
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
-                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">2</span>
-                  <div>
-                    <p className="text-sm text-foreground font-semibold">
-                      Aperta nos 3 pontinhos ⋮ (canto de cima)
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
-                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">3</span>
-                  <div>
-                    <p className="text-sm text-foreground font-semibold">
-                      Aperta em:
-                    </p>
-                    <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
-                      <Download className="w-6 h-6 text-primary" />
-                      <span className="text-sm font-bold text-foreground">
-                        "Instalar aplicativo"
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-xs text-muted-foreground text-center">
-                Pronto! O app vai aparecer na sua tela inicial 🎉
-              </p>
-            </div>
-          )}
+        <div className="w-full max-w-sm mt-6">
+          <Button
+            onClick={() => {
+              if (deferredPrompt) {
+                handleInstall();
+              } else {
+                alert(
+                  "📲 Para instalar o app:\n\n" +
+                  (isIOS
+                    ? "1️⃣ Abra no Safari\n2️⃣ Aperta no ícone de compartilhar ⬆️ (embaixo da tela)\n3️⃣ Aperta em \"Tela de Início\""
+                    : "1️⃣ Abra no Chrome\n2️⃣ Aperta nos 3 pontinhos ⋮ (canto de cima)\n3️⃣ Aperta em \"Instalar aplicativo\"")
+                );
+              }
+            }}
+            variant="outline"
+            className="w-full text-base py-5 gap-2"
+            size="lg"
+          >
+            <Download className="w-5 h-5" />
+            📲 Instalar App no celular
+          </Button>
         </div>
       )}
 
       {isInstalled && (
-        <p className="text-accent text-sm text-center mt-4">✅ App ya instalada</p>
+        <p className="text-accent text-sm text-center mt-4">✅ App instalado</p>
       )}
     </div>
   );
