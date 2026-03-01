@@ -284,9 +284,9 @@ const Login = () => {
               { src: "/images/ios-step4.webp", label: "Paso 4: Toca \"Agregar a Inicio\"" },
               { src: "/images/ios-step5.webp", label: "Paso 5: ¡Listo! Ya está en tu celular" },
             ].map((step, i) => (
-              <div key={i} className="rounded-lg border-2 border-muted overflow-hidden">
+              <div key={i} className="rounded-lg border border-border overflow-hidden bg-muted">
                 <p className="text-sm font-semibold text-foreground bg-card px-3 py-2">{step.label}</p>
-                <img src={step.src} alt={step.label} className="w-full border-t border-muted" loading="lazy" />
+                <img src={step.src} alt={step.label} className="w-full" loading="lazy" />
               </div>
             ))}
           </div>
