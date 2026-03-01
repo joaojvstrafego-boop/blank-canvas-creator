@@ -268,7 +268,7 @@ const Login = () => {
       )}
 
       {/* iOS Step-by-step guide */}
-      {isIOS && !isInstalled && (
+      {!isInstalled && (
         <div className="w-full max-w-sm mt-8 space-y-4">
           <h3 className="font-display text-xl text-center text-foreground">
             📲 CÓMO INSTALAR EN iPHONE
