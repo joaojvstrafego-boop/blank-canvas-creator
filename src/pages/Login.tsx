@@ -239,12 +239,12 @@ const Login = () => {
 
       {/* Install Section */}
       {!isInstalled && (
-        <div className="w-full max-w-sm space-y-4">
+        <div className="w-full max-w-sm space-y-4 mt-4">
           <h3 className="font-display text-xl text-center text-foreground">
-            📲 INSTALA LA APP
+            📲 INSTALA O APP
           </h3>
 
-          {/* Android / Chrome — botón automático */}
+          {/* Android / Chrome — botão automático */}
           {deferredPrompt && (
             <Button
               onClick={handleInstall}
@@ -252,62 +252,100 @@ const Login = () => {
               size="lg"
             >
               <Download className="w-5 h-5" />
-              Instalar App en mi celular
+              Instalar App no meu celular
             </Button>
           )}
 
-          {/* iOS — instrucciones mínimas (no hay API automática) */}
-          {isIOS && !deferredPrompt && (
-            <div className="bg-card rounded-xl p-5 border-2 border-primary/30 space-y-4">
-              <p className="text-base font-bold text-foreground text-center">
-                📱 No iPhone é assim:
-              </p>
+          {/* Instruções visuais para todos */}
+          {!deferredPrompt && (
+            <div className="bg-card rounded-xl p-5 border-2 border-primary/30 space-y-5">
               
-              <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
-                <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">1</span>
-                <div>
-                  <p className="text-base text-foreground font-semibold">
-                    Aperta esse botão aqui embaixo 👇
-                  </p>
-                  <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
-                    <Share className="w-6 h-6 text-primary" />
-                    <span className="text-sm text-muted-foreground">
-                      (o quadradinho com a flechinha pra cima)
-                    </span>
+              {/* iPhone */}
+              <div className="space-y-3">
+                <p className="text-base font-bold text-foreground text-center">
+                  🍎 iPhone / iPad
+                </p>
+                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
+                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">1</span>
+                  <div>
+                    <p className="text-sm text-foreground font-semibold">
+                      Abra no <span className="font-bold">Safari</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
+                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">2</span>
+                  <div>
+                    <p className="text-sm text-foreground font-semibold">
+                      Aperta esse botão 👇
+                    </p>
+                    <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
+                      <Share className="w-6 h-6 text-primary" />
+                      <span className="text-xs text-muted-foreground">
+                        (quadradinho com flechinha pra cima, lá embaixo da tela)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
+                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">3</span>
+                  <div>
+                    <p className="text-sm text-foreground font-semibold">
+                      Aperta em:
+                    </p>
+                    <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
+                      <PlusSquare className="w-6 h-6 text-primary" />
+                      <span className="text-sm font-bold text-foreground">
+                        "Tela de Início"
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-center">
-                <span className="text-2xl animate-bounce">⬇️</span>
-              </div>
+              <div className="border-t border-border" />
 
-              <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
-                <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">2</span>
-                <div>
-                  <p className="text-base text-foreground font-semibold">
-                    Depois aperta em:
-                  </p>
-                  <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
-                    <PlusSquare className="w-6 h-6 text-primary" />
-                    <span className="text-sm font-bold text-foreground">
-                      "Tela de Início"
-                    </span>
+              {/* Android */}
+              <div className="space-y-3">
+                <p className="text-base font-bold text-foreground text-center">
+                  🤖 Android
+                </p>
+                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
+                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">1</span>
+                  <div>
+                    <p className="text-sm text-foreground font-semibold">
+                      Abra no <span className="font-bold">Chrome</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
+                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">2</span>
+                  <div>
+                    <p className="text-sm text-foreground font-semibold">
+                      Aperta nos 3 pontinhos ⋮ (canto de cima)
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
+                  <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">3</span>
+                  <div>
+                    <p className="text-sm text-foreground font-semibold">
+                      Aperta em:
+                    </p>
+                    <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
+                      <Download className="w-6 h-6 text-primary" />
+                      <span className="text-sm font-bold text-foreground">
+                        "Instalar aplicativo"
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
 
               <p className="text-xs text-muted-foreground text-center">
-                🍎 A Apple não deixa instalar automático, mas são só esses 2 cliques!
+                Pronto! O app vai aparecer na sua tela inicial 🎉
               </p>
             </div>
-          )}
-
-          {/* Ni iOS ni prompt disponible — instrucción genérica */}
-          {!isIOS && !deferredPrompt && (
-            <p className="text-muted-foreground text-xs text-center">
-              Abre esta página en Chrome para instalar la app.
-            </p>
           )}
         </div>
       )}
