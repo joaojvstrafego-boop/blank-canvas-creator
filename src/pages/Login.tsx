@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChefHat, Download, Loader2, ArrowLeft } from "lucide-react";
+import { ChefHat, Download, Loader2, ArrowLeft, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -276,17 +276,24 @@ const Login = () => {
           <p className="text-muted-foreground text-sm text-center">
             Sigue estos pasos para instalar la app en tu iPhone:
           </p>
-          <div className="space-y-3">
+          <div className="space-y-1">
             {[
               { src: "/images/ios-step1.webp", label: "Paso 1: Abre los 3 puntitos ⋯" },
               { src: "/images/ios-step2.webp", label: "Paso 2: Toca \"Compartir\"" },
               { src: "/images/ios-step3.webp", label: "Paso 3: Toca \"Ver más\"" },
               { src: "/images/ios-step4.webp", label: "Paso 4: Toca \"Agregar a Inicio\"" },
               { src: "/images/ios-step5.webp", label: "Paso 5: ¡Listo! Ya está en tu celular" },
-            ].map((step, i) => (
-              <div key={i} className="rounded-lg border border-border overflow-hidden bg-muted">
-                <p className="text-sm font-semibold text-foreground bg-card px-3 py-2">{step.label}</p>
-                <img src={step.src} alt={step.label} className="w-full" loading="lazy" />
+            ].map((step, i, arr) => (
+              <div key={i}>
+                <div className="rounded-lg border border-border overflow-hidden bg-muted">
+                  <p className="text-sm font-semibold text-foreground bg-card px-3 py-2">{step.label}</p>
+                  <img src={step.src} alt={step.label} className="w-full" loading="lazy" />
+                </div>
+                {i < arr.length - 1 && (
+                  <div className="flex justify-center py-2">
+                    <ArrowDown className="w-8 h-8 text-primary animate-bounce" />
+                  </div>
+                )}
               </div>
             ))}
           </div>
