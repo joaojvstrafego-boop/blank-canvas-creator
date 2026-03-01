@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChefHat, Smartphone, Share, PlusSquare, MoreVertical, Download, Loader2, ArrowLeft } from "lucide-react";
+import { ChefHat, Share, PlusSquare, Download, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,39 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [view, setView] = useState<View>("login");
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
+
+  useState(() => {
+    // Detect iOS
+    const ua = navigator.userAgent;
+    const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    setIsIOS(ios);
+
+    // Detect if already installed (standalone mode)
+    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
+      setIsInstalled(true);
+    }
+
+    // Capture install prompt for Android/Chrome
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  });
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setIsInstalled(true);
+    }
+    setDeferredPrompt(null);
+  };
 
   const switchView = (v: View) => {
     setView(v);
@@ -204,90 +237,58 @@ const Login = () => {
         </div>
       )}
 
-      {/* Install Instructions */}
-      <div className="w-full max-w-sm space-y-4">
-        <h3 className="font-display text-xl text-center text-foreground">
-          📲 INSTALA LA APP EN TU CELULAR
-        </h3>
-        <p className="text-center text-sm text-muted-foreground">
-          ¡Es muy fácil! Sigue estos pasos simples 👇
-        </p>
+      {/* Install Section */}
+      {!isInstalled && (
+        <div className="w-full max-w-sm space-y-4">
+          <h3 className="font-display text-xl text-center text-foreground">
+            📲 INSTALA LA APP
+          </h3>
 
-        {/* iPhone */}
-        <div className="bg-card rounded-xl p-5 border-2 border-primary/30 space-y-4">
-          <h4 className="font-display text-lg text-primary text-center flex items-center justify-center gap-2">
-            🍎 Si tienes iPhone o iPad
-          </h4>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">1</span>
-              <p className="text-sm text-foreground">
-                Abre esta página usando <span className="font-bold text-primary">Safari</span> (el navegador azul con la brújula que viene en tu iPhone)
-              </p>
-            </div>
-            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">2</span>
-              <p className="text-sm text-foreground">
-                Toca este botón <Share className="w-5 h-5 inline text-primary" /> que está <span className="font-bold">abajo de tu pantalla</span> (es un cuadradito con una flecha hacia arriba)
-              </p>
-            </div>
-            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">3</span>
-              <p className="text-sm text-foreground">
-                Desliza hacia abajo y toca <PlusSquare className="w-5 h-5 inline text-primary" /> <span className="font-bold">"Agregar a pantalla de inicio"</span>
-              </p>
-            </div>
-            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">4</span>
-              <p className="text-sm text-foreground">
-                Toca <span className="font-bold">"Agregar"</span> arriba a la derecha y <span className="font-bold text-primary">¡ya está! 🎉</span>
-              </p>
-            </div>
-          </div>
-        </div>
+          {/* Android / Chrome — botón automático */}
+          {deferredPrompt && (
+            <Button
+              onClick={handleInstall}
+              className="w-full text-lg py-6 gap-2"
+              size="lg"
+            >
+              <Download className="w-5 h-5" />
+              Instalar App en mi celular
+            </Button>
+          )}
 
-        {/* Android */}
-        <div className="bg-card rounded-xl p-5 border-2 border-primary/30 space-y-4">
-          <h4 className="font-display text-lg text-primary text-center flex items-center justify-center gap-2">
-            🤖 Si tienes Android
-          </h4>
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">1</span>
-              <p className="text-sm text-foreground">
-                Abre esta página usando <span className="font-bold text-primary">Chrome</span> (el navegador con el círculo de colores)
+          {/* iOS — instrucciones mínimas (no hay API automática) */}
+          {isIOS && !deferredPrompt && (
+            <div className="bg-card rounded-xl p-5 border border-border space-y-3">
+              <p className="text-sm text-muted-foreground text-center">
+                En iPhone, sigue estos 2 pasos:
               </p>
+              <div className="flex items-center gap-3 bg-primary/5 rounded-lg p-3">
+                <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">1</span>
+                <p className="text-sm text-foreground">
+                  Toca <Share className="w-5 h-5 inline text-primary" /> abajo de tu pantalla
+                </p>
+              </div>
+              <div className="flex items-center gap-3 bg-primary/5 rounded-lg p-3">
+                <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">2</span>
+                <p className="text-sm text-foreground">
+                  Toca <PlusSquare className="w-5 h-5 inline text-primary" /> <span className="font-bold">"Agregar a inicio"</span>
+                </p>
+              </div>
             </div>
-            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">2</span>
-              <p className="text-sm text-foreground">
-                Toca los <MoreVertical className="w-5 h-5 inline text-primary" /> <span className="font-bold">3 puntitos</span> que están <span className="font-bold">arriba a la derecha</span> de tu pantalla
-              </p>
-            </div>
-            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">3</span>
-              <p className="text-sm text-foreground">
-                Busca y toca <Download className="w-5 h-5 inline text-primary" /> <span className="font-bold">"Instalar app"</span> o <span className="font-bold">"Agregar a pantalla de inicio"</span>
-              </p>
-            </div>
-            <div className="flex items-start gap-3 bg-primary/5 rounded-lg p-3">
-              <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">4</span>
-              <p className="text-sm text-foreground">
-                Toca <span className="font-bold">"Instalar"</span> y <span className="font-bold text-primary">¡ya está! 🎉</span>
-              </p>
-            </div>
-          </div>
-        </div>
+          )}
 
-        <div className="bg-accent/10 rounded-xl p-4 text-center space-y-1">
-          <p className="text-foreground text-sm font-semibold">
-            ✨ ¡Después la app aparecerá en tu celular como cualquier otra app!
-          </p>
-          <p className="text-muted-foreground text-xs">
-            La puedes abrir directamente desde tu pantalla de inicio, sin necesidad de buscarla en el navegador.
-          </p>
+          {/* Ni iOS ni prompt disponible — instrucción genérica */}
+          {!isIOS && !deferredPrompt && (
+            <p className="text-muted-foreground text-xs text-center">
+              Abre esta página en Chrome para instalar la app.
+            </p>
+          )}
         </div>
-      </div>
+      )}
+
+      {isInstalled && (
+        <p className="text-accent text-sm text-center mt-4">✅ App ya instalada</p>
+      )}
     </div>
   );
 };
