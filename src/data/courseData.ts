@@ -110,6 +110,13 @@ export const courseFolders: CourseFolder[] = [
     color: "primary",
     lessons: [
       {
+        id: "video-estallido-dulce",
+        title: "Estallido de las palomitas",
+        description: "Aprende cómo estallan las palomitas correctamente",
+        type: "video",
+        videoUrl: "https://drive.google.com/file/d/1SywOQMPG3Et2e3jR2s5wbMI8absYRh6x/preview",
+      },
+      {
         id: "video-obligatorio",
         title: "Clase 1 (Obligatorio ver primero)",
         description: "Clase introductoria obligatoria antes de comenzar",
@@ -223,6 +230,13 @@ export const courseFolders: CourseFolder[] = [
     color: "primary",
     lessons: [
       {
+        id: "video-estallido-aterciopelado",
+        title: "Estallido de las palomitas",
+        description: "Aprende cómo estallan las palomitas correctamente",
+        type: "video",
+        videoUrl: "https://drive.google.com/file/d/1SywOQMPG3Et2e3jR2s5wbMI8absYRh6x/preview",
+      },
+      {
         id: "caramelo-intro",
         title: "Caramelización Clara Aterciopelada (Comenzar por aquí)",
         description: "Aprende la técnica de caramelización clara aterciopelada",
@@ -266,6 +280,13 @@ export const courseFolders: CourseFolder[] = [
     icon: Video,
     color: "primary",
     lessons: [
+      {
+        id: "video-estallido-agridulce",
+        title: "Estallido de las palomitas",
+        description: "Aprende cómo estallan las palomitas correctamente",
+        type: "video",
+        videoUrl: "https://drive.google.com/file/d/1SywOQMPG3Et2e3jR2s5wbMI8absYRh6x/preview",
+      },
       {
         id: "agri-1",
         title: "Clase Introductoria - Comienza Aquí",
