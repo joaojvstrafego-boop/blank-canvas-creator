@@ -258,22 +258,48 @@ const Login = () => {
 
           {/* iOS — instrucciones mínimas (no hay API automática) */}
           {isIOS && !deferredPrompt && (
-            <div className="bg-card rounded-xl p-5 border border-border space-y-3">
-              <p className="text-sm text-muted-foreground text-center">
-                En iPhone, sigue estos 2 pasos:
+            <div className="bg-card rounded-xl p-5 border-2 border-primary/30 space-y-4">
+              <p className="text-base font-bold text-foreground text-center">
+                📱 No iPhone é assim:
               </p>
-              <div className="flex items-center gap-3 bg-primary/5 rounded-lg p-3">
-                <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">1</span>
-                <p className="text-sm text-foreground">
-                  Toca <Share className="w-5 h-5 inline text-primary" /> abajo de tu pantalla
-                </p>
+              
+              <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
+                <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">1</span>
+                <div>
+                  <p className="text-base text-foreground font-semibold">
+                    Aperta esse botão aqui embaixo 👇
+                  </p>
+                  <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
+                    <Share className="w-6 h-6 text-primary" />
+                    <span className="text-sm text-muted-foreground">
+                      (o quadradinho com a flechinha pra cima)
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center gap-3 bg-primary/5 rounded-lg p-3">
-                <span className="bg-primary text-primary-foreground rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shrink-0">2</span>
-                <p className="text-sm text-foreground">
-                  Toca <PlusSquare className="w-5 h-5 inline text-primary" /> <span className="font-bold">"Agregar a inicio"</span>
-                </p>
+
+              <div className="flex justify-center">
+                <span className="text-2xl animate-bounce">⬇️</span>
               </div>
+
+              <div className="flex items-start gap-3 bg-primary/10 rounded-xl p-4 border border-primary/20">
+                <span className="bg-primary text-primary-foreground rounded-full w-9 h-9 flex items-center justify-center text-lg font-bold shrink-0">2</span>
+                <div>
+                  <p className="text-base text-foreground font-semibold">
+                    Depois aperta em:
+                  </p>
+                  <div className="flex items-center gap-2 mt-2 bg-background rounded-lg px-3 py-2 border border-border">
+                    <PlusSquare className="w-6 h-6 text-primary" />
+                    <span className="text-sm font-bold text-foreground">
+                      "Tela de Início"
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-xs text-muted-foreground text-center">
+                🍎 A Apple não deixa instalar automático, mas são só esses 2 cliques!
+              </p>
             </div>
           )}
 
