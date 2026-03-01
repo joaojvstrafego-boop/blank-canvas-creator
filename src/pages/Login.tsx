@@ -266,6 +266,32 @@ const Login = () => {
       {isInstalled && (
         <p className="text-accent text-sm text-center mt-4">✅ App instalado</p>
       )}
+
+      {/* iOS Step-by-step guide */}
+      {isIOS && !isInstalled && (
+        <div className="w-full max-w-sm mt-8 space-y-4">
+          <h3 className="font-display text-xl text-center text-foreground">
+            📲 CÓMO INSTALAR EN iPHONE
+          </h3>
+          <p className="text-muted-foreground text-sm text-center">
+            Sigue estos pasos para instalar la app en tu iPhone:
+          </p>
+          <div className="space-y-3">
+            {[
+              { src: "/images/ios-step1.webp", label: "Paso 1: Abre los 3 puntitos ⋯" },
+              { src: "/images/ios-step2.webp", label: "Paso 2: Toca \"Compartir\"" },
+              { src: "/images/ios-step3.webp", label: "Paso 3: Toca \"Ver más\"" },
+              { src: "/images/ios-step4.webp", label: "Paso 4: Toca \"Agregar a Inicio\"" },
+              { src: "/images/ios-step5.webp", label: "Paso 5: ¡Listo! Ya está en tu celular" },
+            ].map((step, i) => (
+              <div key={i} className="rounded-lg border border-border overflow-hidden">
+                <p className="text-sm font-semibold text-foreground bg-card px-3 py-2">{step.label}</p>
+                <img src={step.src} alt={step.label} className="w-full" loading="lazy" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
