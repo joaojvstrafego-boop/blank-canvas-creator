@@ -229,10 +229,10 @@ const Login = () => {
 
       {/* Toggle login/signup */}
       {view === "login" && (
-        <div className="w-full max-w-sm bg-card/50 rounded-xl p-4 border border-border mb-8 text-center space-y-3">
-          <p className="text-muted-foreground text-sm">¿No tienes cuenta o olvidaste tu contraseña?</p>
-          <Button variant="outline" className="w-full" onClick={() => switchView("signup")}>
-            Crear cuenta
+        <div className="w-full max-w-sm bg-primary/10 rounded-xl p-4 border-2 border-primary/30 mb-8 text-center space-y-3">
+          <p className="text-foreground text-sm font-medium">¿No tienes cuenta o olvidaste tu contraseña?</p>
+          <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 text-base py-5 font-bold" onClick={() => switchView("signup")}>
+            🎓 Crear cuenta
           </Button>
         </div>
       )}
@@ -253,8 +253,8 @@ const Login = () => {
                 );
               }
             }}
-            variant="outline"
-            className="w-full text-base py-5 gap-2"
+            variant="default"
+            className="w-full text-base py-5 gap-2 font-bold bg-accent text-accent-foreground hover:bg-accent/90 border-2 border-accent/50"
             size="lg"
           >
             <Download className="w-5 h-5" />
