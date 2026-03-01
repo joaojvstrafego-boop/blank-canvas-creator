@@ -229,7 +229,7 @@ const Login = () => {
 
       {/* Toggle login/signup */}
       {view === "login" && (
-        <div className="w-full max-w-sm bg-primary/10 rounded-xl p-4 border-2 border-primary/30 mb-8 text-center space-y-3">
+        <div className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-8 text-center space-y-3">
           <p className="text-foreground text-sm font-medium">¿No tienes cuenta o olvidaste tu contraseña?</p>
           <Button className="w-full text-base py-5" onClick={() => switchView("signup")}>
             🎓 Crear cuenta
