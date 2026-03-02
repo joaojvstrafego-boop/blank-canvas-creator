@@ -145,7 +145,7 @@ const Login = () => {
               value={password}
               onChange={(e) => { setPassword(e.target.value); setError(""); }}
               required
-              minLength={6}
+              minLength={4}
             />
             {error && <p className="text-destructive text-sm">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
