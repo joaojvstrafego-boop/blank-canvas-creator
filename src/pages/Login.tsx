@@ -227,13 +227,17 @@ const Login = () => {
         </div>
       )}
 
-      {/* Toggle login/signup */}
+      {/* Info box */}
       {view === "login" && (
-        <div className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-8 text-center space-y-3">
-          <p className="text-foreground text-sm font-medium">¿No tienes cuenta o olvidaste tu contraseña?</p>
-          <Button className="w-full text-base py-5" onClick={() => switchView("signup")}>
-            🎓 Crear cuenta
-          </Button>
+        <div className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-8 text-center space-y-2">
+          <p className="text-foreground text-sm font-medium">📩 Usa el correo que registraste en la compra</p>
+          <p className="text-muted-foreground text-sm">🔑 Tu contraseña es: <span className="font-bold text-foreground">1234</span></p>
+          <button
+            onClick={() => switchView("forgot")}
+            className="text-primary text-sm underline hover:text-primary/80 transition-colors"
+          >
+            ¿Olvidaste tu contraseña?
+          </button>
         </div>
       )}
 
