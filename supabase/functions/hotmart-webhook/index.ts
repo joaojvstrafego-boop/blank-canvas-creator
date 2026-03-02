@@ -45,7 +45,7 @@ serve(async (req) => {
 
     console.log(`Processing event: ${event}, email: ${email}`);
 
-    // Only process approved purchases
+    // Approved purchase events → create user
     const approvedEvents = [
       "PURCHASE_APPROVED",
       "purchase.approved", 
@@ -54,14 +54,65 @@ serve(async (req) => {
       "approved",
     ];
 
-    const isApproved =
-      approvedEvents.some((e) => e.toLowerCase() === String(event).toLowerCase()) ||
-      !event; // if no event field, treat as approved (manual trigger)
+    // Refund/chargeback events → ban user
+    const revokeEvents = [
+      "PURCHASE_REFUNDED",
+      "purchase.refunded",
+      "PURCHASE_CHARGEBACK",
+      "purchase.chargeback",
+      "PURCHASE_CANCELED",
+      "purchase.canceled",
+      "refunded",
+      "chargeback",
+      "canceled",
+    ];
 
-    if (!isApproved) {
+    const eventLower = String(event).toLowerCase();
+    const isApproved =
+      approvedEvents.some((e) => e.toLowerCase() === eventLower) ||
+      !event;
+    const isRevoke = revokeEvents.some((e) => e.toLowerCase() === eventLower);
+
+    if (!isApproved && !isRevoke) {
       console.log(`Ignoring event: ${event}`);
       return new Response(
         JSON.stringify({ message: `Event ${event} ignored` }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // === REVOKE ACCESS (refund/chargeback) ===
+    if (isRevoke) {
+      const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
+      const user = existingUsers?.users?.find(
+        (u) => u.email?.toLowerCase() === email.toLowerCase()
+      );
+
+      if (!user) {
+        console.log(`User ${email} not found, nothing to revoke`);
+        return new Response(
+          JSON.stringify({ message: "User not found", email }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Ban the user (prevents login)
+      const { error: banError } = await supabaseAdmin.auth.admin.updateUserById(
+        user.id,
+        { ban_duration: "876600h" } // ~100 years
+      );
+
+      if (banError) {
+        console.error("Error banning user:", banError.message);
+        return new Response(
+          JSON.stringify({ error: banError.message }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      console.log(`User ${email} banned due to ${event}`);
+      return new Response(
+        JSON.stringify({ message: "User access revoked", email, reason: event }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
