@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.instagram-generator]
 verify_jwt = false
+
+[functions.hotmart-webhook]
+verify_jwt = false
