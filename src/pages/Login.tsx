@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { ChefHat, Download, Loader2, ArrowLeft, ArrowDown } from "lucide-react";
+import { useState } from "react";
+import { ChefHat, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,37 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [view, setView] = useState<View>("login");
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isIOS, setIsIOS] = useState(false);
-  const [isInstalled, setIsInstalled] = useState(false);
-  const [showInstallGuide, setShowInstallGuide] = useState(false);
 
-  useEffect(() => {
-    const ua = navigator.userAgent;
-    const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    setIsIOS(ios);
-
-    if (window.matchMedia("(display-mode: standalone)").matches || (window.navigator as any).standalone) {
-      setIsInstalled(true);
-    }
-
-    const handler = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
-  }, []);
-
-  const handleInstall = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setIsInstalled(true);
-    }
-    setDeferredPrompt(null);
-  };
 
   const switchView = (v: View) => {
     setView(v);
@@ -228,7 +198,7 @@ const Login = () => {
       {view === "login" && (
         <div className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-8 text-center space-y-2">
           <p className="text-foreground text-sm font-medium">📩 Usa el correo que registraste en la compra</p>
-          <p className="text-muted-foreground text-sm">🔑 Tu contraseña es: <span className="font-bold text-foreground">1234</span></p>
+          <p className="text-muted-foreground text-sm">🔑 Se você ainda não criou sua senha, use <span className="font-bold text-foreground">“¿Olvidaste tu contraseña?”</span> para definir uma.</p>
           <button
             onClick={() => switchView("forgot")}
             className="text-primary text-sm underline hover:text-primary/80 transition-colors"
@@ -238,23 +208,6 @@ const Login = () => {
         </div>
       )}
 
-      {/* Atalho para tela inicial - discreto */}
-      {!isInstalled && deferredPrompt && (
-        <div className="w-full max-w-sm mt-6">
-          <Button
-            onClick={handleInstall}
-            variant="outline"
-            className="w-full text-sm py-4 gap-2"
-          >
-            <Download className="w-4 h-4" />
-            Adicionar à tela inicial
-          </Button>
-        </div>
-      )}
-
-      {isInstalled && (
-        <p className="text-muted-foreground text-sm text-center mt-4">✅ App adicionado à tela inicial</p>
-      )}
     </div>
   );
 };
