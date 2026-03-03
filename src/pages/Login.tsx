@@ -16,19 +16,17 @@ const Login = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isIOS, setIsIOS] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
 
   useEffect(() => {
-    // Detect iOS
     const ua = navigator.userAgent;
     const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     setIsIOS(ios);
 
-    // Detect if already installed (standalone mode)
     if (window.matchMedia("(display-mode: standalone)").matches || (window.navigator as any).standalone) {
       setIsInstalled(true);
     }
 
-    // Capture install prompt for Android/Chrome
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -75,7 +73,6 @@ const Login = () => {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) {
         if (error.message.includes("already registered")) {
-          // Try to sign in instead
           const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
           if (loginError) {
             setError("Este correo ya está registrado. Verifica tu contraseña o recupera tu contraseña.");
@@ -249,12 +246,10 @@ const Login = () => {
               if (deferredPrompt) {
                 handleInstall();
               } else {
-                alert(
-                  "📲 Para instalar o app:\n\n" +
-                  (isIOS
-                    ? "1️⃣ Abra no Safari\n2️⃣ Aperta no ícone de compartilhar ⬆️ (embaixo da tela)\n3️⃣ Aperta em \"Tela de Início\""
-                    : "1️⃣ Abra no Chrome\n2️⃣ Aperta nos 3 pontinhos ⋮ (canto de cima)\n3️⃣ Aperta em \"Instalar aplicativo\"")
-                );
+                setShowInstallGuide(true);
+                setTimeout(() => {
+                  document.getElementById('install-guide')?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
               }
             }}
             variant="default"
@@ -269,6 +264,34 @@ const Login = () => {
 
       {isInstalled && (
         <p className="text-accent text-sm text-center mt-4">✅ App instalado</p>
+      )}
+
+      {/* Inline install guide (replaces alert) */}
+      {showInstallGuide && !isInstalled && (
+        <div id="install-guide" className="w-full max-w-sm mt-4 bg-card rounded-xl p-5 border-2 border-primary/50 space-y-3">
+          <h3 className="font-display text-lg text-center text-foreground">
+            📲 Como instalar o app
+          </h3>
+          {isIOS ? (
+            <ol className="space-y-2 text-sm text-foreground list-decimal list-inside">
+              <li>Abra este site no <strong>Safari</strong></li>
+              <li>Toque no ícone de <strong>compartilhar</strong> ⬆️ (embaixo da tela)</li>
+              <li>Toque em <strong>"Tela de Início"</strong></li>
+            </ol>
+          ) : (
+            <ol className="space-y-2 text-sm text-foreground list-decimal list-inside">
+              <li>Abra este site no <strong>Chrome</strong></li>
+              <li>Toque nos <strong>3 pontinhos</strong> ⋮ (canto de cima)</li>
+              <li>Toque em <strong>"Instalar aplicativo"</strong></li>
+            </ol>
+          )}
+          <button
+            onClick={() => setShowInstallGuide(false)}
+            className="text-muted-foreground text-xs underline w-full text-center mt-2"
+          >
+            Fechar
+          </button>
+        </div>
       )}
 
       {/* iOS Step-by-step guide */}
