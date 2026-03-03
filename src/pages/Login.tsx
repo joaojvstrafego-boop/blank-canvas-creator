@@ -238,93 +238,22 @@ const Login = () => {
         </div>
       )}
 
-      {/* Install Button */}
-      {!isInstalled && (
+      {/* Atalho para tela inicial - discreto */}
+      {!isInstalled && deferredPrompt && (
         <div className="w-full max-w-sm mt-6">
           <Button
-            onClick={() => {
-              if (deferredPrompt) {
-                handleInstall();
-              } else {
-                setShowInstallGuide(true);
-                setTimeout(() => {
-                  document.getElementById('install-guide')?.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-              }
-            }}
-            variant="default"
-            className="w-full text-base py-5 gap-2 font-bold bg-accent text-accent-foreground hover:bg-accent/90 border-2 border-accent/50 animate-pulse"
-            size="lg"
+            onClick={handleInstall}
+            variant="outline"
+            className="w-full text-sm py-4 gap-2"
           >
-            <Download className="w-5 h-5" />
-            📲 Instalar App no celular
+            <Download className="w-4 h-4" />
+            Adicionar à tela inicial
           </Button>
         </div>
       )}
 
       {isInstalled && (
-        <p className="text-accent text-sm text-center mt-4">✅ App instalado</p>
-      )}
-
-      {/* Inline install guide (replaces alert) */}
-      {showInstallGuide && !isInstalled && (
-        <div id="install-guide" className="w-full max-w-sm mt-4 bg-card rounded-xl p-5 border-2 border-primary/50 space-y-3">
-          <h3 className="font-display text-lg text-center text-foreground">
-            📲 Como instalar o app
-          </h3>
-          {isIOS ? (
-            <ol className="space-y-2 text-sm text-foreground list-decimal list-inside">
-              <li>Abra este site no <strong>Safari</strong></li>
-              <li>Toque no ícone de <strong>compartilhar</strong> ⬆️ (embaixo da tela)</li>
-              <li>Toque em <strong>"Tela de Início"</strong></li>
-            </ol>
-          ) : (
-            <ol className="space-y-2 text-sm text-foreground list-decimal list-inside">
-              <li>Abra este site no <strong>Chrome</strong></li>
-              <li>Toque nos <strong>3 pontinhos</strong> ⋮ (canto de cima)</li>
-              <li>Toque em <strong>"Instalar aplicativo"</strong></li>
-            </ol>
-          )}
-          <button
-            onClick={() => setShowInstallGuide(false)}
-            className="text-muted-foreground text-xs underline w-full text-center mt-2"
-          >
-            Fechar
-          </button>
-        </div>
-      )}
-
-      {/* iOS Step-by-step guide */}
-      {!isInstalled && (
-        <div className="w-full max-w-sm mt-8 space-y-4 bg-card rounded-xl p-4 border border-border">
-          <h3 className="font-display text-xl text-center text-foreground">
-            📲 CÓMO INSTALAR EN iPHONE
-          </h3>
-          <p className="text-muted-foreground text-sm text-center">
-            Sigue estos pasos para instalar la app en tu iPhone:
-          </p>
-          <div className="space-y-1">
-            {[
-              { src: "/images/ios-step1.webp", label: "Paso 1: Abre los 3 puntitos ⋯" },
-              { src: "/images/ios-step2.webp", label: "Paso 2: Toca \"Compartir\"" },
-              { src: "/images/ios-step3.webp", label: "Paso 3: Toca \"Ver más\"" },
-              { src: "/images/ios-step4.webp", label: "Paso 4: Toca \"Agregar a Inicio\"" },
-              { src: "/images/ios-step5.webp", label: "Paso 5: ¡Listo! Ya está en tu celular" },
-            ].map((step, i, arr) => (
-              <div key={i}>
-                <div className="rounded-lg border border-border overflow-hidden bg-muted">
-                  <p className="text-sm font-semibold text-foreground bg-card px-3 py-2">{step.label}</p>
-                  <img src={step.src} alt={step.label} className="w-full" loading="lazy" />
-                </div>
-                {i < arr.length - 1 && (
-                  <div className="flex justify-center py-2">
-                    <ArrowDown className="w-8 h-8 text-primary animate-bounce" />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+        <p className="text-muted-foreground text-sm text-center mt-4">✅ App adicionado à tela inicial</p>
       )}
     </div>
   );
