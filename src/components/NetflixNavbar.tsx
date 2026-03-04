@@ -1,9 +1,27 @@
-import { useState } from "react";
-import { ChefHat, Search, Bell, LogOut } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChefHat, Search, Bell, LogOut, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const NetflixNavbar = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    setDeferredPrompt(null);
+    setShowMenu(false);
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -37,7 +55,15 @@ const NetflixNavbar = () => {
             CV
           </button>
           {showMenu && (
-            <div className="absolute right-0 top-10 bg-card border border-border rounded-lg shadow-lg overflow-hidden min-w-[140px]">
+            <div className="absolute right-0 top-10 bg-card border border-border rounded-lg shadow-lg overflow-hidden min-w-[160px]">
+              {deferredPrompt && (
+                <button
+                  onClick={handleInstall}
+                  className="flex items-center gap-2 w-full px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors"
+                >
+                  <Download className="w-4 h-4" /> Instalar App
+                </button>
+              )}
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 w-full px-4 py-3 text-sm text-foreground hover:bg-muted transition-colors"
