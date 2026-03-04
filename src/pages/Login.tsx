@@ -235,20 +235,23 @@ const Login = () => {
         </div>
       )}
 
-      {/* Install App Button (Android) */}
-      {view === "login" && deferredPrompt && (
+      {/* Install App Button */}
+      {view === "login" && (
         <Button
-          onClick={handleInstall}
+          onClick={deferredPrompt ? handleInstall : () => {
+            const iosSection = document.getElementById('ios-install');
+            iosSection?.scrollIntoView({ behavior: 'smooth' });
+          }}
           variant="outline"
           className="w-full max-w-sm mb-4 gap-2"
         >
-          <Download className="w-4 h-4" /> Descargar App
+          <Download className="w-4 h-4" /> 📲 Descargar App
         </Button>
       )}
 
       {/* iOS Install Instructions */}
       {view === "login" && (
-        <div className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-8">
+        <div id="ios-install" className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-8">
           <h3 className="font-display text-base tracking-wider text-foreground mb-3 text-center">
             📱 ¿USAS iPHONE? INSTALA LA APP ASÍ:
           </h3>
