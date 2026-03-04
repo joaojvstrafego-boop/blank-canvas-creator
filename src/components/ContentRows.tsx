@@ -708,30 +708,6 @@ const ContentRows = () => {
         </ScrollRow>
       </div>
 
-      {/* iOS Install Instructions */}
-      <div className="mx-4 md:mx-12 mb-10 bg-card border border-border rounded-xl p-5 md:p-6">
-        <h3 className="font-display text-lg md:text-xl tracking-wider text-foreground mb-4 text-center">
-          📱 ¿USAS iPHONE? INSTALA LA APP ASÍ:
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
-          <div className="flex flex-col items-center gap-2 text-center">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">1</div>
-            <p>Abre esta página en <span className="text-foreground font-medium">Safari</span></p>
-          </div>
-          <div className="flex flex-col items-center gap-2 text-center">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">2</div>
-            <p>Toca el botón <span className="text-foreground font-medium">Compartir</span> (el cuadrado con flecha ↑)</p>
-          </div>
-          <div className="flex flex-col items-center gap-2 text-center">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">3</div>
-            <p>Busca <span className="text-foreground font-medium">"Agregar a pantalla de inicio"</span></p>
-          </div>
-          <div className="flex flex-col items-center gap-2 text-center">
-            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary">4</div>
-            <p>Toca <span className="text-foreground font-medium">"Agregar"</span> y ¡listo! 🎉</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

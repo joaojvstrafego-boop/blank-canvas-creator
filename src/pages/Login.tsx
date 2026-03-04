@@ -205,7 +205,7 @@ const Login = () => {
 
       {/* Info box */}
       {view === "login" && (
-        <div className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-8 text-center space-y-2">
+        <div className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-4 text-center space-y-2">
           <p className="text-foreground text-sm font-medium">📩 Usa el correo que registraste en la compra</p>
           <p className="text-foreground text-sm">🔑 Tu contraseña es: <span className="font-bold text-primary">123456</span></p>
           <p className="text-muted-foreground text-xs">Si ya cambiaste tu contraseña, usa la que elegiste.</p>
@@ -215,6 +215,33 @@ const Login = () => {
           >
             ¿Olvidaste tu contraseña?
           </button>
+        </div>
+      )}
+
+      {/* iOS Install Instructions */}
+      {view === "login" && (
+        <div className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-8">
+          <h3 className="font-display text-base tracking-wider text-foreground mb-3 text-center">
+            📱 ¿USAS iPHONE? INSTALA LA APP ASÍ:
+          </h3>
+          <div className="grid grid-cols-2 gap-3 text-xs text-muted-foreground">
+            <div className="flex items-start gap-2">
+              <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">1</span>
+              <p>Abre en <span className="text-foreground font-medium">Safari</span></p>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">2</span>
+              <p>Toca <span className="text-foreground font-medium">Compartir</span> ↑</p>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">3</span>
+              <p><span className="text-foreground font-medium">"Agregar a inicio"</span></p>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">4</span>
+              <p>Toca <span className="text-foreground font-medium">"Agregar"</span> 🎉</p>
+            </div>
+          </div>
         </div>
       )}
 
