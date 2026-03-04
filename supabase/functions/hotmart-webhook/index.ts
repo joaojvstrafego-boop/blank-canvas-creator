@@ -131,11 +131,11 @@ serve(async (req) => {
       );
     }
 
-    // Create user with password 1234
+    // Create user with password 123456
     const { data: newUser, error: createError } =
       await supabaseAdmin.auth.admin.createUser({
         email: email.toLowerCase(),
-        password: "1234",
+        password: "123456",
         email_confirm: true, // auto-confirm email
       });
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChefHat, Loader2, ArrowLeft } from "lucide-react";
+import { ChefHat, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,7 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [view, setView] = useState<View>("login");
-
+  const [showPassword, setShowPassword] = useState(false);
 
   const switchView = (v: View) => {
     setView(v);
@@ -106,14 +106,23 @@ const Login = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <Input
-              type="password"
-              placeholder="Contraseña"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(""); }}
-              required
-              minLength={4}
-            />
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Contraseña"
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setError(""); }}
+                required
+                minLength={4}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
             {error && <p className="text-destructive text-sm">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Entrar"}
@@ -198,7 +207,8 @@ const Login = () => {
       {view === "login" && (
         <div className="w-full max-w-sm bg-card rounded-xl p-4 border border-border mb-8 text-center space-y-2">
           <p className="text-foreground text-sm font-medium">📩 Usa el correo que registraste en la compra</p>
-          <p className="text-muted-foreground text-sm">🔑 Se você ainda não criou sua senha, use <span className="font-bold text-foreground">“¿Olvidaste tu contraseña?”</span> para definir uma.</p>
+          <p className="text-foreground text-sm">🔑 Tu contraseña es: <span className="font-bold text-primary">123456</span></p>
+          <p className="text-muted-foreground text-xs">Si ya cambiaste tu contraseña, usa la que elegiste.</p>
           <button
             onClick={() => switchView("forgot")}
             className="text-primary text-sm underline hover:text-primary/80 transition-colors"

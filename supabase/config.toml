@@ -8,3 +8,12 @@ verify_jwt = false
 
 [functions.hotmart-webhook]
 verify_jwt = false
+
+[functions.reset-all-passwords]
+verify_jwt = false
+
+[functions.bulk-create-users]
+verify_jwt = false
+
+[functions.seed-course-files]
+verify_jwt = false
