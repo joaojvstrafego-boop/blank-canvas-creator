@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChefHat, Loader2, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ChefHat, Loader2, ArrowLeft, Eye, EyeOff, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,23 @@ const Login = () => {
   const [success, setSuccess] = useState("");
   const [view, setView] = useState<View>("login");
   const [showPassword, setShowPassword] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    setDeferredPrompt(null);
+  };
 
   const switchView = (v: View) => {
     setView(v);
@@ -216,6 +233,17 @@ const Login = () => {
             ¿Olvidaste tu contraseña?
           </button>
         </div>
+      )}
+
+      {/* Install App Button (Android) */}
+      {view === "login" && deferredPrompt && (
+        <Button
+          onClick={handleInstall}
+          variant="outline"
+          className="w-full max-w-sm mb-4 gap-2"
+        >
+          <Download className="w-4 h-4" /> Descargar App
+        </Button>
       )}
 
       {/* iOS Install Instructions */}
