@@ -114,21 +114,21 @@ export const courseFolders: CourseFolder[] = [
         title: "Estallido de las palomitas",
         description: "Aprende cómo estallan las palomitas correctamente",
         type: "video",
-        videoUrl: "https://drive.google.com/file/d/1SywOQMPG3Et2e3jR2s5wbMI8absYRh6x/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=5f8411e4-5bb4-42f5-8c35-53f7c6a07e8f",
       },
       {
         id: "video-obligatorio",
         title: "Clase 1 (Obligatorio ver primero)",
         description: "Clase introductoria obligatoria antes de comenzar",
         type: "video",
-        videoUrl: "https://drive.google.com/file/d/14jtwy15RPdXSNFwL-E0p2fKCWF5gTVNT/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=16e04a1c-dfc5-47d7-9771-d62984975436",
       },
       {
         id: "video-caramelizacion",
         title: "Caramelización (Obligatorio ver antes de las recetas)",
         description: "Aprende la técnica de caramelización antes de las recetas",
         type: "video",
-        videoUrl: "https://drive.google.com/file/d/10JZh2XcIVHvXyxydnDMNBQvvvqfbFmk8/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=108810d8-d425-4557-8fa2-7403643f1e81",
       },
       {
         id: "video-1",
@@ -137,7 +137,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "10 min",
         type: "video",
         thumbnail: "leche-nido",
-        videoUrl: "https://drive.google.com/file/d/1lgyL-8qAmqjIl0udiD0-adcJWTQ5ETSN/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=f50aba07-9cbd-4ed0-ada5-d0883d5af39b",
       },
       {
         id: "video-2",
@@ -146,7 +146,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "12 min",
         type: "video",
         thumbnail: "leche-choco",
-        videoUrl: "https://drive.google.com/file/d/1w1dNO_ic41QTA5N2WMVDOdvPCqJbaBZs/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=de01158c-82ef-4e42-a724-4d7f9bda5f39",
       },
       {
         id: "video-3",
@@ -155,7 +155,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "15 min",
         type: "video",
         thumbnail: "trufa",
-        videoUrl: "https://drive.google.com/file/d/1H74PO3m5yOEXpzayUpCKWSqSoePoxNCY/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=dd07aa40-e05f-43db-b24d-f15f10307256",
       },
       {
         id: "video-4",
@@ -164,7 +164,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "10 min",
         type: "video",
         thumbnail: "ovomaltine",
-        videoUrl: "https://drive.google.com/file/d/1MmPq7sEGZwwZo69cPMKqiTuA-e2Zeo6B/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=22ac5cff-8f61-45ae-a70a-cc37cbb0490c",
       },
       {
         id: "video-5",
@@ -173,7 +173,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "12 min",
         type: "video",
         thumbnail: "oreo",
-        videoUrl: "https://drive.google.com/file/d/1Nzjq0mGX_S1t1VLozedgygsaDvotGqlj/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=b46af69c-94b7-463b-9ba8-d4b3efb59ff2",
       },
       {
         id: "video-6",
@@ -182,7 +182,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "10 min",
         type: "video",
         thumbnail: "nutella",
-        videoUrl: "https://drive.google.com/file/d/1ybNGQLAvabWUoXpMEFtJGlz_Nnm3KtQb/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=3cddf72f-5079-4335-af44-5c4c66b6e249",
       },
       {
         id: "video-7",
@@ -191,7 +191,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "10 min",
         type: "video",
         thumbnail: "mani",
-        videoUrl: "https://drive.google.com/file/d/1uyVXIg5tL9sV9NO2sBVrDNWpRjARKnPE/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=38b76587-c67e-41ed-95dd-e1144e730508",
       },
       {
         id: "video-8",
@@ -200,7 +200,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "10 min",
         type: "video",
         thumbnail: "fresa",
-        videoUrl: "https://drive.google.com/file/d/1PgRExc2N4e5aZHZKJrydCsRHtQvdU04l/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=9fc27788-39b0-41e6-b2c5-744a7e7a3504",
       },
       {
         id: "video-9",
@@ -209,7 +209,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "10 min",
         type: "video",
         thumbnail: "coco",
-        videoUrl: "https://drive.google.com/file/d/1LZKSf6jFq2TOP8OVUYjrkGK6P0mUE2qd/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=9d677964-47f6-430d-b52d-d29b06a1d128",
       },
       {
         id: "video-10",
@@ -218,7 +218,7 @@ export const courseFolders: CourseFolder[] = [
         duration: "12 min",
         type: "video",
         thumbnail: "coco-choco",
-        videoUrl: "https://drive.google.com/file/d/1u2FInwMpt159rjLLUId-y2U6R1KgOENf/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=0c46cf26-86a8-40cb-a870-b66aa4b95986",
       },
     ],
   },
