@@ -671,18 +671,36 @@ const ContentRows = () => {
   }
 
   const bonusIds = ["bonus-instagram", "bonus-recetas-alternativas", "calculadora", "instagram-ai", "orcamentos", "soporte"];
-  const mainFolders = courseFolders.filter((f) => !bonusIds.includes(f.id));
+  const videoRecipeIds = ["receitas-video", "caramelo-aterciopelado", "receitas-agridulces"];
+  const introFolders = courseFolders.filter((f) => !bonusIds.includes(f.id) && !videoRecipeIds.includes(f.id));
+  const videoRecipeFolders = courseFolders.filter((f) => videoRecipeIds.includes(f.id));
   const bonusFolders = courseFolders.filter((f) => bonusIds.includes(f.id));
 
   return (
     <div className="-mt-16 relative z-10 pb-16">
-      {/* Main course modules */}
+      {/* Introduction modules */}
       <div className="mb-10">
         <h3 className="font-display text-xl md:text-2xl tracking-wider text-foreground px-4 md:px-12 mb-3">
-          MÓDULOS DEL CURSO
+          INTRODUCCIÓN
         </h3>
         <ScrollRow>
-          {mainFolders.map((folder) => (
+          {introFolders.map((folder) => (
+            <FolderCard
+              key={folder.id}
+              folder={folder}
+              onClick={() => setOpenFolder(folder.id)}
+            />
+          ))}
+        </ScrollRow>
+      </div>
+
+      {/* Video recipes */}
+      <div className="mb-10">
+        <h3 className="font-display text-xl md:text-2xl tracking-wider text-foreground px-4 md:px-12 mb-3">
+          RECETAS EN VIDEO
+        </h3>
+        <ScrollRow>
+          {videoRecipeFolders.map((folder) => (
             <FolderCard
               key={folder.id}
               folder={folder}
