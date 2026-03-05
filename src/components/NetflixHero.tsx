@@ -2,7 +2,7 @@ import heroImg from "@/assets/hero-netflix.jpg";
 
 const NetflixHero = () => {
   return (
-    <div className="relative w-full h-[30vh] min-h-[200px]">
+    <div className="relative w-full h-[28vh] min-h-[180px] max-h-[250px]">
       <img
         src={heroImg}
         alt="Palomitas Redonditas"
@@ -11,15 +11,12 @@ const NetflixHero = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
 
-      <div className="absolute bottom-[20%] left-4 md:left-12 max-w-lg z-10 animate-fade-in">
-        <h1 className="font-display text-5xl md:text-7xl tracking-wider text-foreground mb-2">
+      <div className="absolute bottom-4 left-4 md:left-12 max-w-lg z-10 animate-fade-in">
+        <h1 className="font-display text-3xl md:text-5xl tracking-wider text-foreground mb-1">
           PALOMITAS REDONDITAS
         </h1>
-        <p className="text-sm md:text-base text-muted-foreground mb-1 font-medium">
+        <p className="text-xs md:text-sm text-muted-foreground font-medium">
           Con la profesora Carmela Vega
-        </p>
-        <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
-          Domina el arte de las palomitas perfectas. Recetas exclusivas, técnicas profesionales y secretos que transformarán tus palomitas.
         </p>
       </div>
     </div>
