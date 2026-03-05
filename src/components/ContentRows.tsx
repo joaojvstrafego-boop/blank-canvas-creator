@@ -677,7 +677,7 @@ const ContentRows = () => {
   const bonusFolders = courseFolders.filter((f) => bonusIds.includes(f.id));
 
   return (
-    <div className="-mt-16 relative z-10 pb-16">
+    <div className="-mt-4 relative z-10 pb-16">
       {/* Introduction modules */}
       <div className="mb-10">
         <h3 className="font-display text-xl md:text-2xl tracking-wider text-foreground px-4 md:px-12 mb-3">
