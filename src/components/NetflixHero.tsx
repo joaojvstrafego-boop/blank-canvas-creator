@@ -2,7 +2,7 @@ import heroImg from "@/assets/hero-netflix.jpg";
 
 const NetflixHero = () => {
   return (
-    <div className="relative w-full h-[50vh] min-h-[300px]">
+    <div className="relative w-full h-[30vh] min-h-[200px]">
       <img
         src={heroImg}
         alt="Palomitas Redonditas"
