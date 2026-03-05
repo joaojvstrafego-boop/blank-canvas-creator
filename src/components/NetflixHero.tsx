@@ -11,7 +11,7 @@ const NetflixHero = () => {
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-background/40" />
 
-      <div className="absolute bottom-4 left-4 md:left-12 max-w-lg z-10 animate-fade-in">
+      <div className="absolute bottom-10 left-4 md:left-12 max-w-lg z-10 animate-fade-in">
         <h1 className="font-display text-3xl md:text-5xl tracking-wider text-foreground mb-1">
           PALOMITAS REDONDITAS
         </h1>
