@@ -285,15 +285,15 @@ export const courseFolders: CourseFolder[] = [
         title: "Estallido de las palomitas",
         description: "Aprende cómo estallan las palomitas correctamente",
         type: "video",
-        videoUrl: "https://drive.google.com/file/d/1SywOQMPG3Et2e3jR2s5wbMI8absYRh6x/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=5f8411e4-5bb4-42f5-8c35-53f7c6a07e8f",
       },
       {
         id: "agri-1",
-        title: "Clase Introductoria - Comienza Aquí",
+        title: "Clase 1 (Obligatorio ver primero)",
         description: "Introducción a las recetas agridulces",
         type: "video",
         thumbnail: "intro-agridulce",
-        videoUrl: "https://drive.google.com/file/d/17SspqXAvk2SFeCdLNmy-Ucp9gl66Pvov/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=764dd02b-91d4-4ff6-aaa6-2fb43c61de3d",
       },
       {
         id: "agri-2",
@@ -301,7 +301,7 @@ export const courseFolders: CourseFolder[] = [
         description: "Los utensilios que necesitas para las recetas agridulces",
         type: "video",
         thumbnail: "utensilios",
-        videoUrl: "https://drive.google.com/file/d/1lsFj1zWBAPf1omSuL-3s2mehRLIjLu57/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=5635c044-d43e-4c63-a9b5-06db58c6095b",
       },
       {
         id: "agri-3",
@@ -309,7 +309,7 @@ export const courseFolders: CourseFolder[] = [
         description: "Palomitas sabor Doritos",
         type: "video",
         thumbnail: "doritos",
-        videoUrl: "https://drive.google.com/file/d/1GKP03NmR8Jv2m_9IEqQw5ysIjmQzgWjy/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=6fa984f2-f0b4-46e2-aa1b-7e504b1c7bb3",
       },
       {
         id: "agri-4",
@@ -317,7 +317,7 @@ export const courseFolders: CourseFolder[] = [
         description: "Palomitas con cebolla crujiente",
         type: "video",
         thumbnail: "cebolla",
-        videoUrl: "https://drive.google.com/file/d/1EXjpyyod2J93OL9uLZyw-d8p0le0CXSD/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=fa9d5167-a9c3-4526-a221-45340f5dacf9",
       },
       {
         id: "agri-5",
@@ -325,7 +325,7 @@ export const courseFolders: CourseFolder[] = [
         description: "Palomitas estilo mexicano con pimienta",
         type: "video",
         thumbnail: "mexicana",
-        videoUrl: "https://drive.google.com/file/d/1PUdqoYGfQloWKCeav6acggiFbUmD3Qq0/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=4e5378fd-bb90-481c-8f24-ce8d37da6670",
       },
       {
         id: "agri-6",
@@ -333,7 +333,7 @@ export const courseFolders: CourseFolder[] = [
         description: "Palomitas con papas crujientes estilo Ruffles",
         type: "video",
         thumbnail: "papas",
-        videoUrl: "https://drive.google.com/file/d/1NK6DIvCipGa2DN8wF0hJtZtQLjBZ2ytT/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=8376c07f-1e24-4a3c-b278-5d3f272d59df",
       },
       {
         id: "agri-7",
@@ -341,7 +341,7 @@ export const courseFolders: CourseFolder[] = [
         description: "Palomitas con ajo",
         type: "video",
         thumbnail: "ajo",
-        videoUrl: "https://drive.google.com/file/d/18rg9V_wesp5mkoZVYu1WpXAUPQo_fp48/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=9cbaee2c-5958-4229-b213-d21cff94bf43",
       },
       {
         id: "agri-8",
@@ -349,7 +349,7 @@ export const courseFolders: CourseFolder[] = [
         description: "Palomitas con limón y pimienta",
         type: "video",
         thumbnail: "lemon",
-        videoUrl: "https://drive.google.com/file/d/1LBC3BTDjqXd6Q05rToB7crKQyh4APujw/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=bb8497d1-e7ec-4264-8efa-e237ca4c6415",
       },
       {
         id: "agri-9",
@@ -357,7 +357,7 @@ export const courseFolders: CourseFolder[] = [
         description: "Palomitas con queso parmesano",
         type: "video",
         thumbnail: "queso",
-        videoUrl: "https://drive.google.com/file/d/13R-aM95oB1I4pOJpdTSusMzzSAlk9tIv/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=fe14e04e-2352-4a7d-89ea-c6cef7e91081",
       },
       {
         id: "agri-10",
@@ -365,7 +365,7 @@ export const courseFolders: CourseFolder[] = [
         description: "Palomitas agridulces con maní",
         type: "video",
         thumbnail: "mani-agridulce",
-        videoUrl: "https://drive.google.com/file/d/1yjh-SwPAGUWw0PWAwHwGqsV3kWx6WuUf/preview",
+        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=04554d9e-765d-49c9-b3f9-b5f3dfd4450b",
       },
     ],
   },
