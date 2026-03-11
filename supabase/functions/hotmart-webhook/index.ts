@@ -27,8 +27,6 @@ serve(async (req) => {
     const body = await req.json();
     console.log("Hotmart webhook received:", JSON.stringify(body));
 
-    // Hotmart sends different payload formats depending on the webhook version
-    // Common fields: event, data.buyer.email
     const event = body.event || body.status;
     const email =
       body?.data?.buyer?.email ||
@@ -43,18 +41,17 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Processing event: ${event}, email: ${email}`);
+    const normalizedEmail = email.toLowerCase().trim();
+    console.log(`Processing event: ${event}, email: ${normalizedEmail}`);
 
-    // Approved purchase events → create user
     const approvedEvents = [
       "PURCHASE_APPROVED",
-      "purchase.approved", 
+      "purchase.approved",
       "PURCHASE_COMPLETE",
       "purchase_approved",
       "approved",
     ];
 
-    // Refund/chargeback events → ban user
     const revokeEvents = [
       "PURCHASE_REFUNDED",
       "purchase.refunded",
@@ -69,8 +66,7 @@ serve(async (req) => {
 
     const eventLower = String(event).toLowerCase();
     const isApproved =
-      approvedEvents.some((e) => e.toLowerCase() === eventLower) ||
-      !event;
+      approvedEvents.some((e) => e.toLowerCase() === eventLower) || !event;
     const isRevoke = revokeEvents.some((e) => e.toLowerCase() === eventLower);
 
     if (!isApproved && !isRevoke) {
@@ -81,25 +77,22 @@ serve(async (req) => {
       );
     }
 
-    // === REVOKE ACCESS (refund/chargeback) ===
+    // === REVOKE ACCESS ===
     if (isRevoke) {
-      const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-      const user = existingUsers?.users?.find(
-        (u) => u.email?.toLowerCase() === email.toLowerCase()
-      );
+      // Search for user by email using paginated approach
+      const user = await findUserByEmail(supabaseAdmin, normalizedEmail);
 
       if (!user) {
-        console.log(`User ${email} not found, nothing to revoke`);
+        console.log(`User ${normalizedEmail} not found, nothing to revoke`);
         return new Response(
-          JSON.stringify({ message: "User not found", email }),
+          JSON.stringify({ message: "User not found", email: normalizedEmail }),
           { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
-      // Ban the user (prevents login)
       const { error: banError } = await supabaseAdmin.auth.admin.updateUserById(
         user.id,
-        { ban_duration: "876600h" } // ~100 years
+        { ban_duration: "876600h" }
       );
 
       if (banError) {
@@ -110,36 +103,45 @@ serve(async (req) => {
         );
       }
 
-      console.log(`User ${email} banned due to ${event}`);
+      console.log(`User ${normalizedEmail} banned due to ${event}`);
       return new Response(
-        JSON.stringify({ message: "User access revoked", email, reason: event }),
+        JSON.stringify({ message: "User access revoked", email: normalizedEmail, reason: event }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Check if user already exists
-    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-    const userExists = existingUsers?.users?.some(
-      (u) => u.email?.toLowerCase() === email.toLowerCase()
-    );
-
-    if (userExists) {
-      console.log(`User ${email} already exists, skipping creation`);
-      return new Response(
-        JSON.stringify({ message: "User already exists", email }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    // Create user with password 123456
+    // === APPROVED PURCHASE: Try to create user directly ===
     const { data: newUser, error: createError } =
       await supabaseAdmin.auth.admin.createUser({
-        email: email.toLowerCase(),
+        email: normalizedEmail,
         password: "123456",
-        email_confirm: true, // auto-confirm email
+        email_confirm: true,
       });
 
     if (createError) {
+      // If user already exists, that's fine - unban them in case they were banned before
+      if (
+        createError.message.includes("already been registered") ||
+        createError.message.includes("already exists") ||
+        createError.status === 422
+      ) {
+        console.log(`User ${normalizedEmail} already exists, ensuring access is active`);
+
+        // Find and unban the user in case they were previously banned
+        const existingUser = await findUserByEmail(supabaseAdmin, normalizedEmail);
+        if (existingUser) {
+          await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+            ban_duration: "none",
+          });
+          console.log(`User ${normalizedEmail} unbanned (re-purchase)`);
+        }
+
+        return new Response(
+          JSON.stringify({ message: "User already exists, access ensured", email: normalizedEmail }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
       console.error("Error creating user:", createError.message);
       return new Response(
         JSON.stringify({ error: createError.message }),
@@ -147,9 +149,9 @@ serve(async (req) => {
       );
     }
 
-    console.log(`User created successfully: ${email}`);
+    console.log(`User created successfully: ${normalizedEmail}, userId: ${newUser.user.id}`);
     return new Response(
-      JSON.stringify({ message: "User created", email, userId: newUser.user.id }),
+      JSON.stringify({ message: "User created", email: normalizedEmail, userId: newUser.user.id }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
@@ -160,3 +162,28 @@ serve(async (req) => {
     );
   }
 });
+
+// Helper: find user by email with pagination (avoids the listUsers bug)
+async function findUserByEmail(supabaseAdmin: any, email: string) {
+  let page = 1;
+  const perPage = 100;
+
+  while (true) {
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers({
+      page,
+      perPage,
+    });
+
+    if (error || !data?.users?.length) break;
+
+    const found = data.users.find(
+      (u: any) => u.email?.toLowerCase() === email.toLowerCase()
+    );
+    if (found) return found;
+
+    if (data.users.length < perPage) break;
+    page++;
+  }
+
+  return null;
+}
