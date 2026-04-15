@@ -243,12 +243,15 @@ const VideoPlayer = ({ lesson, onClose }: { lesson: Lesson; onClose: () => void 
       </div>
       <div className="relative aspect-video rounded-lg overflow-hidden bg-black">
         <iframe
-          src={lesson.videoUrl}
+          src={lesson.videoUrl?.replace('youtube.com', 'youtube-nocookie.com')}
           className="w-full h-full"
-          allow="autoplay; encrypted-media"
+          allow="autoplay; encrypted-media; fullscreen"
           allowFullScreen
           title={lesson.title}
+          referrerPolicy="no-referrer"
         />
+        {/* Block YouTube logo click */}
+        <div className="absolute top-0 right-0 w-24 h-12 z-10" />
       </div>
       <p className="text-sm text-muted-foreground mt-3">{lesson.description}</p>
     </div>
