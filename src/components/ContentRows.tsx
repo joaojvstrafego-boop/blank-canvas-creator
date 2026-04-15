@@ -666,7 +666,7 @@ const ContentRows = () => {
         )}
 
         {/* Video player */}
-        {playingLesson?.videoUrl && playingLesson?.id !== "calc-1" && (
+        {playingLesson?.type === "video" && playingLesson?.videoUrl && playingLesson?.id !== "calc-1" && (
           <VideoPlayer lesson={playingLesson} onClose={() => setPlayingLesson(null)} />
         )}
       </>
