@@ -114,7 +114,7 @@ export const courseFolders: CourseFolder[] = [
         title: "Estallido de las palomitas",
         description: "Aprende cómo estallan las palomitas correctamente",
         type: "video",
-        videoUrl: "https://player-vz-83f73029-e5a.tv.pandavideo.com.br/embed/?v=5f8411e4-5bb4-42f5-8c35-53f7c6a07e8f",
+        videoUrl: "https://www.youtube.com/embed/P_FhhHt3XBI?modestbranding=1&rel=0&showinfo=0",
       },
       {
         id: "video-obligatorio",
